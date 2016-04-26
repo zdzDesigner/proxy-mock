@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+	
+	var argv = require('yargs')
+				  .option('p', {
+				    alias : 'port',
+				    demand: false,
+				    default: 8080,
+				    describe: '端口',
+				    type: 'number'
+				  })
+				  .argv
+
+	var httpServer = require('./../app/server.js')
+	httpServer(argv.p)
+
+

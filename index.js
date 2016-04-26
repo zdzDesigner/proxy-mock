@@ -1,0 +1,1 @@
+require('./app/server')(8080)

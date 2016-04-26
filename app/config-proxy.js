@@ -1,0 +1,20 @@
+module.exports = [
+	'host',
+	'connection',
+	'content-length',
+	'pragma',
+	'cache-control',
+	'origin',
+	'domain',
+	'user-agent',
+	'content-type',
+	'accept',
+	'x-requested-with',
+	'referer',
+	'accept-encoding',
+	'accept-language',
+	// 'x-auth-appkey',
+	// 'x-auth-time',
+	// 'x-auth-token',
+	// 'cookie'
+]
