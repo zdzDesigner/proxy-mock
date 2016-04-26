@@ -49,8 +49,8 @@ module.exports = function (port) {
 	router.use((req, res,next) => {
 		
 		var file_path = get_parse(req.url).getPath()
-		// console.log(file_path)
-		// console.log(file_path,mime.lookup(file_path),STATIC_SOURCE.indexOf(mime.lookup(file_path)))
+		console.log((file_path).gray,STATIC_SOURCE.indexOf(mime.lookup(file_path)))
+		
 		// 静态文件过滤
 		if(~STATIC_SOURCE.indexOf(mime.lookup(file_path))){
 			async.series([
@@ -127,17 +127,28 @@ module.exports = function (port) {
 			}
 		}
 
-		if(~req.headers['content-type'].indexOf('application/json')){
-			data = JSON.parse(data)
-		}
-		console.log((req.headers.domain+req.url).green)
-		console.log((data).yellow)
-		request({
+		
+		var options = {
 	        method:req.method,
 	        url:req.headers.domain+req.url,
-	        form:data,
 	        headers:headers
-	    }).pipe(res)
+	    }
+		if(req.headers['content-type']){
+			switch(true){
+				case req.headers['content-type'].indexOf('application/json')!=-1:
+					options.body = data
+				break;
+				case req.headers['content-type'].indexOf('x-www-form')!=-1:
+					options.form = data
+				break;
+			}
+			
+		}
+
+		console.log((req.headers.domain+req.url).green)
+		console.log(typeof data === 'string' ? (data).yellow : (JSON.stringify(data)).yellow)
+
+		request(options).pipe(res)
 
 	}
 

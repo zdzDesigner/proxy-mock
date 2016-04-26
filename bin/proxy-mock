@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-	
-	var argv = require('yargs')
+	var colors = require('colors'),
+		argv = require('yargs')
 				  .option('p', {
 				    alias : 'port',
 				    demand: false,
@@ -13,5 +13,8 @@
 
 	var httpServer = require('./../app/server.js')
 	httpServer(argv.p)
+	console.log(('proxy-mock start ......').green)
+	console.log(('proxy-mock start ....').green)
+	console.log(('proxy-mock start .').green)
 
 

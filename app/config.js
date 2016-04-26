@@ -16,7 +16,7 @@ global.STATIC_SOURCE = [
 	'application/font-woff2',
 	'application/x-font-ttf',
 	'application/vnd.ms-fontobject',
-	'image/svg+xml',
+	'image/svg+xml'
 	// 'application/octet-stream',
 	// 'application/atom+xml',
 	// 'application/rss+xml',
