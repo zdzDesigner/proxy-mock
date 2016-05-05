@@ -50,7 +50,11 @@ module.exports = function (port) {
 		
 		var file_path = get_parse(req.url).getPath()
 		console.log((file_path).gray,STATIC_SOURCE.indexOf(mime.lookup(file_path)))
-		
+		// 未指定文件 定向到 index.html
+		if(file_path == process.cwd()+'/'){
+			console.log(('redirect to index.html').magenta)
+			file_path = file_path+'index.html'
+		}
 		// 静态文件过滤
 		if(~STATIC_SOURCE.indexOf(mime.lookup(file_path))){
 			async.series([
@@ -147,8 +151,17 @@ module.exports = function (port) {
 
 		console.log((req.headers.domain+req.url).green)
 		console.log(typeof data === 'string' ? (data).yellow : (JSON.stringify(data)).yellow)
-
-		request(options).pipe(res)
+		request(options)
+			.on('error', function(err) {
+				console.log(JSON.stringify(err).red)
+				var data = {
+					'message':'后台接口错误',
+					'node-err':err
+				}
+				res.writeHead(600,{'Content-type':'application/json','charset':'urf-8'});
+			    res.end(JSON.stringify(data))
+			  })
+			.pipe(res)
 
 	}
 

@@ -16,5 +16,6 @@
 	console.log(('proxy-mock start ......').green)
 	console.log(('proxy-mock start ....').green)
 	console.log(('proxy-mock start .').green)
+	console.log(('proxy-mock start').green)
 
 
