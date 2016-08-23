@@ -21,12 +21,21 @@
     var getSource = function(path,callback){
 
         fs.exists(path,function(exist){
-            if(!exist && !console.log('访问'+path+'文件不存在') && callback('访问'+path+'文件不存在')) return;
+
+            if(!exist ) {
+                console.log('访问'+path+'文件不存在')
+                return
+            }
+
             fs.readFile(path,function(err,data){
-                err && !console.log('读取'+path+'文件错误') && (data = '读取'+path+'文件内容失败');
-                callback(data);
-            });
-        });
+                 if(err){
+                    console.log('读取'+path+'文件错误')
+                    return
+                 }
+                callback(data)
+            })
+            
+        })
         
     };
     
