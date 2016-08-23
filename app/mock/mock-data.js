@@ -22,9 +22,14 @@ var util = require('util'),
  * @return {[type]}       [description]
  */
 function mockData(value) {
+    
     var data
      
     switch (true) {
+        case value['no-mock']+''=='true' :
+            delete(value['no-mock'])
+            data = value
+            break;        
 
         case util.isString(value) :
             data = getStringValue(value)
@@ -113,6 +118,9 @@ var getStringValue = function (value) {
 var getStringType = function (value) {
 
     var data
+
+    try{
+
     switch(true){
 
         case value === 'phone':
@@ -172,6 +180,11 @@ var getStringType = function (value) {
             data = Mock.Random.string('lower',1,10)
             + Mock.Random.string('number',1,3)
             + Mock.Random.string('lower',1,10);
+    }
+
+    }catch(e){
+        console.log('Mock 参数错误 ：'.red)
+        console.log('     '+e.toString().red)
     }
     return data
     
