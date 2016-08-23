@@ -73,8 +73,12 @@ module.exports = function (port) {
 		// console.log(req.headers)
 
 		if(req.headers.mock){
+			if(req.headers.mock+'' === 'true'){
+				mock_fn(req,res)	
+			}else{
+				mock_static_fn(req,res,req.headers.mock)
+			}
 			
-			mock_fn(req,res,req.headers.mock)
 		}else{
 			request_method(req,res)
 		}
@@ -84,7 +88,7 @@ module.exports = function (port) {
 	/**
 	 * [mock 数据]
 	 */
-	 var mock_fn = function (req,res,mock_path) {
+	 var mock_static_fn = function (req,res,mock_path) {
 
 	 	// console.log(process.cwd()+mock_path+req.url+'.json')
 	 	
@@ -105,6 +109,31 @@ module.exports = function (port) {
  		})
 	 	// promise_param(req).then(data=>{
 	 	// })
+
+	 }
+
+
+	 /**
+	 * [mock 数据]
+	 */
+	 var mock_fn = function (req,res) {
+
+	 	promise_param(req).then(data=>{
+
+	 		if(typeof data === 'string'){
+	 			// console.log(data)
+	 			data = JSON.parse(data)
+	 			// console.log(data)
+	 		}
+
+	 		data = mock_data(data)
+	 		// console.log(data)
+	 		res.writeHead(200,{
+	  			'content-type':'application/json;charset=utf8'
+	  		})
+	 		res.end(JSON.stringify(data))
+
+	 	})
 
 	 }
 
