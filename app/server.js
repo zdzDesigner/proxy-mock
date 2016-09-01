@@ -54,6 +54,8 @@ module.exports = function (port) {
 			file_path = file_path+'index.html'
 		}
 
+
+
 		// if(!~STATIC_SOURCE.indexOf(mime.lookup(file_path)) && !~file_path.indexOf('/c/') ){
 		// 	console.log(('redirect to index.html').magenta)
 		// 	file_path = process.cwd()+'/index.html'

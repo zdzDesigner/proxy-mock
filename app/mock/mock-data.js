@@ -186,6 +186,7 @@ var getStringType = function (value,index) {
 
     })
 
+
     // }catch(e){
     //     console.log('Mock 参数错误 ：'.red)
     //     console.log(e.stack.red)
