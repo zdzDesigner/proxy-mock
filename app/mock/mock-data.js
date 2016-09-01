@@ -22,11 +22,9 @@ var util = require('util'),
  *                          }
  * @return {[type]}       [description]
  */
-
-
+var index
 function mockData(value,arr_range) {
     
-
     var data
      
     switch (true) {
@@ -102,7 +100,6 @@ var getStringValue = function (msg,index) {
  *                  url     URL地址
  */
 
-
 var getStringType = function (value,index) {
     var reg = /\{\{(.+?)\}\}/,
         data
@@ -110,7 +107,6 @@ var getStringType = function (value,index) {
     value = value.match(reg)[1]
     
     return warn(function () {
-
 
     switch(true){
 
@@ -181,17 +177,14 @@ var getStringType = function (value,index) {
         break;
 
         default :
-
             data = convert_val(value) 
             
         break;
-
 
     }
     return data
 
     })
-
 
     // }catch(e){
     //     console.log('Mock 参数错误 ：'.red)

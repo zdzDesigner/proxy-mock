@@ -48,13 +48,23 @@ module.exports = function (port) {
 		
 		var file_path = get_parse(req.url).getPath()
 		console.log((file_path).gray,STATIC_SOURCE.indexOf(mime.lookup(file_path)))
-
+		
 		if(file_path == process.cwd()+'/'){
 			console.log(('redirect to index.html').magenta)
 			file_path = file_path+'index.html'
 		}
 
-
+		// if(!~STATIC_SOURCE.indexOf(mime.lookup(file_path)) && !~file_path.indexOf('/c/') ){
+		// 	console.log(('redirect to index.html').magenta)
+		// 	file_path = process.cwd()+'/index.html'
+		// 	console.log(file_path)
+		// }else if(~file_path.indexOf('.js')){
+		// 	console.log(process.cwd(),'----')
+		// 	file_path = process.cwd()+'/dist'+file_path.split('/dist')[1]
+		// 	console.log(file_path)
+		// }
+		
+		
 		// 静态文件过滤
 		if(~STATIC_SOURCE.indexOf(mime.lookup(file_path))){
 
@@ -74,8 +84,12 @@ module.exports = function (port) {
 		// console.log(req.headers)
 
 		if(req.headers.mock){
+			if(req.headers.mock+'' === 'true'){
+				mock_fn(req,res)	
+			}else{
+				mock_static_fn(req,res,req.headers.mock)
+			}
 			
-			mock_fn(req,res)
 		}else{
 			request_method(req,res)
 		}
@@ -85,7 +99,6 @@ module.exports = function (port) {
 	/**
 	 * [mock 数据]
 	 */
-
 	 var mock_static_fn = function (req,res,mock_root) {
 
 	 	// console.log(process.cwd(),mock_root,req.url+'.json')
@@ -115,7 +128,6 @@ module.exports = function (port) {
 	 /**
 	 * [mock 数据]
 	 */
-
 	 var mock_fn = function (req,res) {
 
 	 	promise_param(req).then(data=>{

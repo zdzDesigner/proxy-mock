@@ -11,7 +11,6 @@ var redirect_post = function (res,location) {
 	res.end()
 }
 
-
 module.exports = {
 	get:redirect,
 	post:redirect_post
