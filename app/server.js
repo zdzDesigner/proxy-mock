@@ -84,11 +84,14 @@ module.exports = function (port) {
 
 	router.use( (req, res,next) => {
 		// console.log(req.headers)
+		// console.log(req.headers)
 
 		if(req.headers.mock){
+
 			if(req.headers.mock+'' === 'true'){
 				mock_fn(req,res)	
 			}else{
+				
 				mock_static_fn(req,res,req.headers.mock)
 			}
 			
