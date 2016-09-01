@@ -50,11 +50,11 @@ module.exports = function (port) {
 		
 		var file_path = get_parse(req.url).getPath()
 		console.log((file_path).gray,STATIC_SOURCE.indexOf(mime.lookup(file_path)))
+		// 未指定文件 定向到 index.html
 		if(file_path == process.cwd()+'/'){
 			console.log(('redirect to index.html').magenta)
 			file_path = file_path+'index.html'
 		}
-		
 		// 静态文件过滤
 		if(~STATIC_SOURCE.indexOf(mime.lookup(file_path))){
 			async.series([
@@ -73,12 +73,8 @@ module.exports = function (port) {
 		// console.log(req.headers)
 
 		if(req.headers.mock){
-			if(req.headers.mock+'' === 'true'){
-				mock_fn(req,res)	
-			}else{
-				mock_static_fn(req,res,req.headers.mock)
-			}
 			
+			mock_fn(req,res)
 		}else{
 			request_method(req,res)
 		}
@@ -86,34 +82,6 @@ module.exports = function (port) {
 	})
 
 	/**
-	 * [mock 数据]
-	 */
-	 var mock_static_fn = function (req,res,mock_path) {
-
-	 	// console.log(process.cwd()+mock_path+req.url+'.json')
-	 	
- 		staticSource.getSource(process.cwd()+mock_path+req.url+'.json',function(data){
- 			
- 			data = data.toString()
-
- 			if(typeof data === 'string'){
-	 			data = JSON.parse(data)
-	 		}
-
-	 		data = mock_data(data)
-
-	 		res.writeHead(200,{
-	  			'content-type':'application/json;charset=utf8'
-	  		})
-	 		res.end(JSON.stringify(data))
- 		})
-	 	// promise_param(req).then(data=>{
-	 	// })
-
-	 }
-
-
-	 /**
 	 * [mock 数据]
 	 */
 	 var mock_fn = function (req,res) {
