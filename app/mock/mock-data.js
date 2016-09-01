@@ -5,6 +5,7 @@
  */
 var util = require('util'),
     Mock = require('./mock'),
+    warn = require('../common/warn'),
     Letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
 /**
@@ -21,18 +22,16 @@ var util = require('util'),
  *                          }
  * @return {[type]}       [description]
  */
-function mockData(value) {
+var index
+function mockData(value,arr_range) {
     
     var data
      
     switch (true) {
-        case value['no-mock']+''=='true' :
-            delete(value['no-mock'])
-            data = value
-            break;        
 
         case util.isString(value) :
-            data = getStringValue(value)
+            data = getStringValue(value,index)
+            data = isNaN(+data) ? data : +data
             break;
 
         case util.isNumber(value):
@@ -41,9 +40,10 @@ function mockData(value) {
         
         case util.isArray(value) :
             data = [];
-            var size = Mock.Random.integer(30,30);
+            var size = Mock.Random.integer(arr_range[0],arr_range[1]);
             for (var i = 0; i < size; i++) {
-                data.push(mockData(value[0]));
+                index = i+1
+                data.push(mockData(value[0],arr_range));
             }
             break;
 
@@ -51,7 +51,7 @@ function mockData(value) {
             data = {};
             for (var key in value) {
                 if (value.hasOwnProperty(key)) {
-                    data[key] = mockData(value[key]);
+                    data[key] = mockData(value[key],arr_range);
                 }
             }
             break;
@@ -67,46 +67,30 @@ function mockData(value) {
  *                  $add    $add(加的内容)|cname
  * @return {[type]}       [String]
  */
-var getStringValue = function (value) {
-    var data,innerText
+var getStringValue = function (msg,index) {
 
-    if(value.indexOf('$empty') != -1){
-        if(Math.random() >0.5){
-            data = '' 
-            return
-        }else{
-            value = value.split('|')[1]
-        }
-        data = getStringType(value)
-    }
-
-    if(value.indexOf('$add') != -1){
-        // 前 +
-        if(value.indexOf('$add') == 0){
-            innerText = value.split('|')[0]
-            innerText = innerText.replace('$add(','').replace(')','')
-            value = value.split('|')[1]
-            data = innerText + getStringType(value)    
-        // 后 +
-        }else{
-            innerText = value.split('|')[1]
-            innerText = innerText.replace('$add(','').replace(')','')
-            value = value.split('|')[0]
-            data = getStringType(value) + innerText
-        }
-        
-        
+    var reg = /\{\{(.+?)\}\}/g;
+    var reg_match_arr = msg.match(reg)
+    if(reg_match_arr){
+        reg_match_arr.forEach(function(value,i){
+            var str = getStringType(value,index)
+            if(~msg.indexOf(value)){
+                msg=msg.replace(value,str)
+            }
+        })    
     }else{
-        data = getStringType(value)
+
+        msg = Mock.Random.string('lower',1,10)
+                + Mock.Random.string('number',1,3)
+                + Mock.Random.string('lower',1,10)    
     }
     
+    return msg
 
-    
-    return data
 }
 
 /**
- * [getStringValue 生成字符]
+ * [getStringType 生成字符]
  * @param  {[type]} value [下面的'aaa']
  *                        {name:'aaa'} => 'aaa' 
  *                  region  省市区
@@ -115,13 +99,25 @@ var getStringValue = function (value) {
  *                  ename   英文名字
  *                  url     URL地址
  */
-var getStringType = function (value) {
 
-    var data
+var getStringType = function (value,index) {
+    var reg = /\{\{(.+?)\}\}/,
+        data
 
-    try{
+    value = value.match(reg)[1]
+    
+    return warn(function () {
 
     switch(true){
+
+        case value.indexOf('$range')!=-1 :
+            // console.log(value)
+            arr = value.split('|')
+            temp = arr[0].split(':')[1]
+            temp = temp || 0
+            data = convert_val(arr[1],'to_fixed',temp)
+
+        break;
 
         case value === 'phone':
             data = '1'
@@ -132,6 +128,10 @@ var getStringType = function (value) {
 
         case value === 'url':
             data = Mock.Random.url()
+        break;
+
+        case value === 'index':
+            data = index
         break;
 
         case value === 'region':
@@ -158,17 +158,17 @@ var getStringType = function (value) {
             data = Mock.Random.color()
         break;
 
-        case value.toLowerCase() === 'yyyy-mm-dd':
-            data = Mock.Random.date('yyyy-MM-dd')
-        break;
-
-        case value.toLowerCase() === 'yyyy.mm.dd':
-            data = Mock.Random.date('yyyy-MM-dd').replace(/-/g,'.')
-        break;
-
-        case value.indexOf('$status')!=-1:
-            var val = eval("("+value.split('|')[1]+")")
-            data = val[Math.floor(Math.random()*val.length)]
+        case value.toLowerCase().match(/yyyy|mm|dd|hh|ss/g) != null:
+            // console.log(value.toLowerCase().yellow);
+            // console.log('yyyy|mm|dd|hh|ss'.yellow);
+            data = Mock.Random.date(value)
+            if(value.toLowerCase().match(/\./g)){
+                data = data.replace(/-/g,'.')
+            }
+            if(value.toLowerCase().match(/\//g)){
+                data = data.replace(/-/g,'/')
+            }
+            
         break;
 
         case value.indexOf('$image')!=-1:
@@ -177,18 +177,48 @@ var getStringType = function (value) {
         break;
 
         default :
-            data = Mock.Random.string('lower',1,10)
-            + Mock.Random.string('number',1,3)
-            + Mock.Random.string('lower',1,10);
-    }
+            data = convert_val(value) 
+            
+        break;
 
-    }catch(e){
-        console.log('Mock 参数错误 ：'.red)
-        console.log('     '+e.toString().red)
     }
     return data
+
+    })
+
+    // }catch(e){
+    //     console.log('Mock 参数错误 ：'.red)
+    //     console.log(e.stack.red)
+    //     console.log('--------------'.gray)
+    //     // console.log(e.stack.red)
+        
+        
+        
+        
+    // }
+    
     
 }
+
+function convert_val(val,type,type_arg) {
+
+    try{
+        val = JSON.parse(val)    
+    }catch(e){
+        val = eval("("+val+")")
+    }
+
+    switch(type){
+        case 'to_fixed':
+            val = ((Math.random()*(+val[1]-val[0]))+val[0]).toFixed(type_arg)
+        break;
+        default:
+            val = val[Math.floor(Math.random()*val.length)]
+        break;
+    }
+    return val
+}
+
 /**
  * [getStringValue 生成数字]
  * @param  {[type]} value [下面的1000]
@@ -196,13 +226,38 @@ var getStringType = function (value) {
  * @return {[type]}       [Number]
  */
 var getNumberValue = function (value) {
-    var data
-
-    if(value === 1000){
-        data = 1000
-    }else{
-        data = Mock.Random.integer(1, 100);
-    }
-    return data
+    return  Mock.Random.integer(1, 100)
 }
-module.exports = mockData
+
+
+
+// 输出
+module.exports = function(value) {
+
+    var arr_range = [30,30],
+        delay=0,
+        data
+
+
+    if(util.isObject(value) && value['no-mock']){
+        delete(value['no-mock'])
+        data = value
+    }else{
+        if(util.isObject(value) && value['mock-length']){
+            arr_range = JSON.parse(value['mock-length'])
+            delete(value['mock-length'])
+        }
+        if(util.isObject(value) && value['mock-delay']){
+            delay = +value['mock-delay']
+            delete(value['mock-length'])
+        }
+        data = mockData(value,arr_range)
+    }
+    
+
+    return new Promise(function(resolve,reject){
+        setTimeout(function(){
+            resolve(data)
+        },delay)
+    })
+}

@@ -16,10 +16,8 @@ var http = require('http'),
 	staticSource = require('./common/static-source'),
 	expires = require('./common/expires'),
 	redirect = require('./common/redirect'),
-
+	warn = require('./common/warn'),
 	config_proxy = require('./config-proxy')
-
-
 
 
 
@@ -50,13 +48,26 @@ module.exports = function (port) {
 		
 		var file_path = get_parse(req.url).getPath()
 		console.log((file_path).gray,STATIC_SOURCE.indexOf(mime.lookup(file_path)))
+		
 		if(file_path == process.cwd()+'/'){
 			console.log(('redirect to index.html').magenta)
 			file_path = file_path+'index.html'
 		}
+
+		// if(!~STATIC_SOURCE.indexOf(mime.lookup(file_path)) && !~file_path.indexOf('/c/') ){
+		// 	console.log(('redirect to index.html').magenta)
+		// 	file_path = process.cwd()+'/index.html'
+		// 	console.log(file_path)
+		// }else if(~file_path.indexOf('.js')){
+		// 	console.log(process.cwd(),'----')
+		// 	file_path = process.cwd()+'/dist'+file_path.split('/dist')[1]
+		// 	console.log(file_path)
+		// }
+		
 		
 		// 静态文件过滤
 		if(~STATIC_SOURCE.indexOf(mime.lookup(file_path))){
+
 			async.series([
 				// 设置缓存 ，已缓存、304
 				callback=>{ expires(req,res,file_path,callback)},
@@ -88,24 +99,25 @@ module.exports = function (port) {
 	/**
 	 * [mock 数据]
 	 */
-	 var mock_static_fn = function (req,res,mock_path) {
+	 var mock_static_fn = function (req,res,mock_root) {
 
-	 	// console.log(process.cwd()+mock_path+req.url+'.json')
-	 	
- 		staticSource.getSource(process.cwd()+mock_path+req.url+'.json',function(data){
+	 	// console.log(process.cwd(),mock_root,req.url+'.json')
+	 	var mock_path = '/c/'+req.url.split('/c/')[1]
+	 	mock_path = process.cwd()+mock_root+mock_path+'.json'
+ 		staticSource.getSource(mock_path,function(data){
  			
  			data = data.toString()
+ 			data = warn(function () {
+ 				return JSON.parse(data)
+ 			},mock_path)
 
- 			if(typeof data === 'string'){
-	 			data = JSON.parse(data)
-	 		}
-
-	 		data = mock_data(data)
-
-	 		res.writeHead(200,{
-	  			'content-type':'application/json;charset=utf8'
-	  		})
-	 		res.end(JSON.stringify(data))
+	 		mock_data(data).then(function(data){
+	 			res.writeHead(200,{
+		  			'content-type':'application/json;charset=utf8'
+		  		})
+		 		res.end(JSON.stringify(data))	
+	 		})
+	 		
  		})
 	 	// promise_param(req).then(data=>{
 	 	// })
