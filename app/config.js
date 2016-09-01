@@ -2,6 +2,7 @@ global.BASE_PATH = __dirname.replace('/app','')
 global.PUBLIC_PATH = process.cwd()
 
 
+
 global.STATIC_SOURCE = [
 	'text/css',
 	'text/xml',

@@ -57,11 +57,12 @@
                 // var out = gzip.zip(data, options);
                 // // console.log(new Buffer(out))
                 // res.end(new Buffer(out))   
-            });
-        });
+            })
+        })
           
         
         
-    };
+    }
+
     exports.getSource = getSource
     exports.sendStaticSource = sendStaticSource

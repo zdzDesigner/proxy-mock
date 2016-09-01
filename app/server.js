@@ -54,6 +54,7 @@ module.exports = function (port) {
 			file_path = file_path+'index.html'
 		}
 
+
 		// 静态文件过滤
 		if(~STATIC_SOURCE.indexOf(mime.lookup(file_path))){
 
