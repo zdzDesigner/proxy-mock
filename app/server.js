@@ -102,8 +102,9 @@ module.exports = function (port) {
 	 var mock_static_fn = function (req,res,mock_root) {
 
 	 	// console.log(process.cwd(),mock_root,req.url+'.json')
-	 	var mock_path = '/c/'+req.url.split('/c/')[1]
-	 	mock_path = process.cwd()+mock_root+mock_path+'.json'
+	 	// console.log(req.url.yellow+'----')
+	 	// var mock_path = '/c/'+req.url.split('/c/')[1]
+	 	mock_path = process.cwd()+mock_root+req.url+'.json'
  		staticSource.getSource(mock_path,function(data){
  			
  			data = data.toString()
