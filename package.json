@@ -1,6 +1,6 @@
 {
   "name": "proxy-mock",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "node proxy and mock data",
   "main": "index.js",
   "dependencies": {
@@ -21,13 +21,22 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/zdzDesigner/proxy-mock"
-  },
   "keywords": [
-    "proxy","mock"
+    "proxy",
+    "mock"
   ],
-  "author": "zdzDesigner",
-  "license": "ISC"
+  "author": {
+    "name": "zdzDesigner"
+  },
+  "license": "ISC",
+  "gitHead": "92229926eec720c22c325d880d69efabafea897c",
+  "bugs": {
+    "url": "https://github.com/zdzDesigner/proxy-mock/issues"
+  },
+  "readme": "ERROR: No README data found!",
+  "homepage": "https://github.com/zdzDesigner/proxy-mock#readme",
+  "_id": "proxy-mock@0.0.3",
+  "_shasum": "3b076da55293e30924beb98de3b1bc0803c0cfed",
+  "_from": "../../Users/zdzdesigner/Documents/NODE_MODULE/server_proxy",
+  "_resolved": "file:../../Users/zdzdesigner/Documents/NODE_MODULE/server_proxy"
 }
