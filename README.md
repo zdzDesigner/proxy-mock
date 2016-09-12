@@ -15,7 +15,7 @@
     如你要请求接口为 /active/info
     那要在 "/dev/mock"目录下新建 active目录 ，并新建info.json文件
     即最终目录为 /dev/mock/active/info.json
-    info.json  中的数据即是后天返回数据 如下
+    其中 info.json 中的数据即是接口文档中约定的数据 dome如下
     
     {
         "mock-length":"[2,3]",
@@ -41,7 +41,9 @@
     }
     其中的具体规则 下看
 
+
 ## mock 规则    
+
     // 禁止mock 直接返回当前文件数据
     no-mock : "true"
 
