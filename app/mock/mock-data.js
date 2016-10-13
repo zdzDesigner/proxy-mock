@@ -241,6 +241,7 @@ module.exports = function(value) {
 
     if(util.isObject(value) && value['no-mock']){
         delete(value['no-mock'])
+        // data = JSON.stringify(value)
         data = value
     }else{
         if(util.isObject(value) && value['mock-length']){

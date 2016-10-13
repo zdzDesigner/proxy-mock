@@ -105,13 +105,17 @@ module.exports = function (port) {
 	 	// console.log(req.url.yellow+'----')
 	 	// var mock_path = '/c/'+req.url.split('/c/')[1]
 	 	mock_path = process.cwd()+mock_root+req.url+'.json'
+
  		staticSource.getSource(mock_path,function(data){
  			
  			data = data.toString()
+ 			// console.log(mock_path)
  			data = warn(function () {
- 				return JSON.parse(data)
+ 				data = typeof data ==='string' && JSON.parse(data)
+ 				return data
  			},mock_path)
 
+ 			
 	 		mock_data(data).then(function(data){
 	 			res.writeHead(200,{
 		  			'content-type':'application/json;charset=utf8'
@@ -155,9 +159,9 @@ module.exports = function (port) {
 	/**
 	 * [请求方法]
 	 */
-	var request_method = (req,res)=>{
+	var request_method = (req,res) => {
 
-		promise_param(req).then(data=>{
+		promise_param(req).then(data => {
 			proxy_request(req,res,data)
 		})
 	}

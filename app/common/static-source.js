@@ -26,7 +26,7 @@
                 console.log('访问'+path+'文件不存在')
                 return
             }
-
+            
             fs.readFile(path,function(err,data){
                  if(err){
                     console.log('读取'+path+'文件错误')
@@ -48,11 +48,26 @@
                 res.end()
                 return
             }
+
+
+
             fs.readFile(path,function(err,data){
                 
                 
-                res.writeHead(200,{'Content-type':mime.lookup(path) +';charset=utf8'})
-                res.end(data)
+                if(~path.indexOf('5.b10b4f8d')){
+                    console.log('5.b10b4f8d')
+                    setTimeout(function(){
+                        res.writeHead(200,{'Content-type':mime.lookup(path) +';charset=utf8'})
+                        res.end(data)
+                    },20000)
+                }else{
+                    res.writeHead(200,{'Content-type':mime.lookup(path) +';charset=utf8'})
+                    res.end(data)
+                }
+                
+                // res.writeHead(200,{'Content-type':mime.lookup(path) +';charset=utf8'})
+                // res.end(data)
+                
 
 
                 // res.setHeader("content-encoding", "gzip");
