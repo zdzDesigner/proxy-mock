@@ -32,7 +32,7 @@
                     console.log('读取'+path+'文件错误')
                     return
                  }
-                callback(data)
+                callback(data,path)
             })
             
         })

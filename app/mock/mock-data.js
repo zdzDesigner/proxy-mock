@@ -4,6 +4,7 @@
  * @return {[type]}             [description]
  */
 var util = require('util'),
+    curry = require('lodash.curry'),
     Mock = require('./mock'),
     warn = require('../common/warn'),
     Letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -23,14 +24,14 @@ var util = require('util'),
  * @return {[type]}       [description]
  */
 var index
-function mockData(value,arr_range) {
+function mockData(value,arr_range,mock_path) {
     
     var data
      
     switch (true) {
 
         case util.isString(value) :
-            data = getStringValue(value,index)
+            data = getStringValue(value,index,mock_path)
             data = isNaN(+data) ? data : +data
             break;
 
@@ -43,7 +44,7 @@ function mockData(value,arr_range) {
             var size = Mock.Random.integer(arr_range[0],arr_range[1]);
             for (var i = 0; i < size; i++) {
                 index = i+1
-                data.push(mockData(value[0],arr_range));
+                data.push(mockData(value[0],arr_range,mock_path));
             }
             break;
 
@@ -51,7 +52,7 @@ function mockData(value,arr_range) {
             data = {};
             for (var key in value) {
                 if (value.hasOwnProperty(key)) {
-                    data[key] = mockData(value[key],arr_range);
+                    data[key] = mockData(value[key],arr_range,mock_path);
                 }
             }
             break;
@@ -67,13 +68,13 @@ function mockData(value,arr_range) {
  *                  $add    $add(加的内容)|cname
  * @return {[type]}       [String]
  */
-var getStringValue = function (msg,index) {
+var getStringValue = function (msg,index,mock_path) {
 
     var reg = /\{\{(.+?)\}\}/g;
     var reg_match_arr = msg.match(reg)
     if(reg_match_arr){
         reg_match_arr.forEach(function(value,i){
-            var str = getStringType(value,index)
+            var str = getStringType(value,index,mock_path)
             if(~msg.indexOf(value)){
                 msg=msg.replace(value,str)
             }
@@ -100,11 +101,11 @@ var getStringValue = function (msg,index) {
  *                  url     URL地址
  */
 
-var getStringType = function (value,index) {
+var getStringType = function (value,index,mock_path) {
     var reg = /\{\{(.+?)\}\}/,
         data
 
-    value = value.match(reg)[1]
+    value = value.match(reg)[1].trim()
     
     return warn(function () {
 
@@ -184,7 +185,7 @@ var getStringType = function (value,index) {
     }
     return data
 
-    })
+    },mock_path)
 
     // }catch(e){
     //     console.log('Mock 参数错误 ：'.red)
@@ -201,7 +202,6 @@ var getStringType = function (value,index) {
 }
 
 function convert_val(val,type,type_arg) {
-
     try{
         val = JSON.parse(val)    
     }catch(e){
@@ -231,30 +231,56 @@ var getNumberValue = function (value) {
 
 
 
+// console.log(curry)
+var map = curry(function (callback , arr) {
+    return arr.map(callback)    
+})
+// has_mock 
+var clear_mock = function (value) {
+    delete(value['no-mock'])
+    return value
+}
+var cry_clear_attr = curry(function (value,attr) {
+    delete(value[attr])
+    return value
+})
+
+var keys = ['no-mock','mock-length','mock-delay']
+
+
 // 输出
-module.exports = function(value) {
+module.exports = function(value,mock_path) {
 
     var arr_range = [30,30],
         delay=0,
         data
 
+    var clear_attr = cry_clear_attr(value)    
 
     if(util.isObject(value) && value['no-mock']){
-        delete(value['no-mock'])
-        // data = JSON.stringify(value)
-        data = value
+        data = clear_attr('no-mock')
+
     }else{
+        
         if(util.isObject(value) && value['mock-length']){
             arr_range = JSON.parse(value['mock-length'])
-            delete(value['mock-length'])
+            // delete(value['mock-length'])
+            data = clear_attr('mock-length')
         }
         if(util.isObject(value) && value['mock-delay']){
             delay = +value['mock-delay']
-            delete(value['mock-length'])
+            // delete(value['mock-length'])
+            data = clear_attr('mock-delay')
         }
-        data = mockData(value,arr_range)
+        // data = map(function (attr) {
+        //     delete(value[attr])
+        //     return value
+        // })(keys)[0]
+        // console.log(data)
+        data = mockData(value,arr_range,mock_path)
     }
     
+    // console.log(data)
 
     return new Promise(function(resolve,reject){
         setTimeout(function(){

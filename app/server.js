@@ -105,18 +105,16 @@ module.exports = function (port) {
 	 	// console.log(req.url.yellow+'----')
 	 	// var mock_path = '/c/'+req.url.split('/c/')[1]
 	 	mock_path = process.cwd()+mock_root+req.url+'.json'
-
- 		staticSource.getSource(mock_path,function(data){
+	 	// console.log(mock_path)
+ 		staticSource.getSource(mock_path,function(data,mock_path){
  			
  			data = data.toString()
- 			// console.log(mock_path)
  			data = warn(function () {
  				data = typeof data ==='string' && JSON.parse(data)
  				return data
  			},mock_path)
 
- 			
-	 		mock_data(data).then(function(data){
+	 		mock_data(data,mock_path).then(function(data){
 	 			res.writeHead(200,{
 		  			'content-type':'application/json;charset=utf8'
 		  		})
