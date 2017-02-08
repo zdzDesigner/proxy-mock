@@ -264,6 +264,10 @@ module.exports = function(value,mock_path) {
         
         if(util.isObject(value) && value['mock-length']){
             arr_range = JSON.parse(value['mock-length'])
+            arr_range = arr_range.slice(0,2)
+            if(arr_range.length ==1){
+                arr_range.push(arr_range[0])
+            }
             // delete(value['mock-length'])
             data = clear_attr('mock-length')
         }
