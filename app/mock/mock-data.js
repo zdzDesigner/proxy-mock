@@ -57,11 +57,16 @@ function mockData(value,arr_range,mock_path) {
                 index = i+1
                 data.push(mockData(mockTarget,[min,max],mock_path));
             }
-            // console.log(data)
-            data = data.reduce((newarr,val)=>{
-                if(!~newarr.indexOf(val))  newarr.push(val)
-                return newarr
-            },[])
+            
+            data = uniq(data)
+
+            if(data.length < size){
+                for(var j =0;j<size*9;j++){
+                    data.push(mockData(mockTarget,[min,max],mock_path));
+                }
+                data = uniq(data)
+            }
+            
             break;
 
         case util.isObject(value) :
@@ -245,6 +250,17 @@ function convert_val(val,type,type_arg) {
     return val
 }
 
+/**
+ * [uniq 过滤输出去重]
+ * @param  {[Array]} data [Array]
+ * @return {[Array]}      [Array]
+ */
+function uniq(data){
+    return data.reduce((newarr,val)=>{
+            if(!~newarr.indexOf(val))  newarr.push(val)
+            return newarr
+        },[])
+}
 /**
  * [getStringValue 生成数字]
  * @param  {[type]} value [下面的1000]
