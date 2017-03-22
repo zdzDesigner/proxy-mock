@@ -1,6 +1,6 @@
 {
   "name": "proxy-mock",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "node proxy and mock data",
   "main": "index.js",
   "dependencies": {
