@@ -41,11 +41,27 @@ function mockData(value,arr_range,mock_path) {
         
         case util.isArray(value) :
             data = [];
-            var size = Mock.Random.integer(arr_range[0],arr_range[1]);
+            
+            var min = arr_range[0]
+            var max = arr_range[1]
+            var mockTarget = value[0]
+            var size = Mock.Random.integer(min,max);
+
+            if( 'string' == typeof value[0] && ~value[0].indexOf('$length')){
+                size = getStringType(value[0])
+                mockTarget = value[1]
+            }
+
+            
             for (var i = 0; i < size; i++) {
                 index = i+1
-                data.push(mockData(value[0],arr_range,mock_path));
+                data.push(mockData(mockTarget,[min,max],mock_path));
             }
+            // console.log(data)
+            data = data.reduce((newarr,val)=>{
+                if(!~newarr.indexOf(val))  newarr.push(val)
+                return newarr
+            },[])
             break;
 
         case util.isObject(value) :
@@ -69,16 +85,19 @@ function mockData(value,arr_range,mock_path) {
  * @return {[type]}       [String]
  */
 var getStringValue = function (msg,index,mock_path) {
-
+    // console.log(msg)
     var reg = /\{\{(.+?)\}\}/g;
     var reg_match_arr = msg.match(reg)
     if(reg_match_arr){
+        // console.log(reg_match_arr)
         reg_match_arr.forEach(function(value,i){
             var str = getStringType(value,index,mock_path)
+            // console.log(value,str)
             if(~msg.indexOf(value)){
                 msg=msg.replace(value,str)
             }
-        })    
+        }) 
+        // console.log(msg)   
     }else{
 
         msg = Mock.Random.string('lower',1,10)
@@ -110,6 +129,11 @@ var getStringType = function (value,index,mock_path) {
     return warn(function () {
 
     switch(true){
+        case value.indexOf('$length')!=-1 :
+            arr = value.split('|')
+            data = convert_val(arr[1],'to_fixed',0)
+
+        break;
 
         case value.indexOf('$range')!=-1 :
             // console.log(value)
@@ -119,6 +143,7 @@ var getStringType = function (value,index,mock_path) {
             data = convert_val(arr[1],'to_fixed',temp)
 
         break;
+
 
         case value === 'phone':
             data = '1'
@@ -179,7 +204,6 @@ var getStringType = function (value,index,mock_path) {
 
         default :
             data = convert_val(value) 
-            
         break;
 
     }
@@ -214,6 +238,8 @@ function convert_val(val,type,type_arg) {
         break;
         default:
             val = val[Math.floor(Math.random()*val.length)]
+            // console.log(type,type_arg)
+            // console.log(typeof val)
         break;
     }
     return val
