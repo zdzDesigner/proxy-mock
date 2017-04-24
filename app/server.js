@@ -1,5 +1,7 @@
 
 var http = require('http'),
+	fs = require('fs'),
+	path = require('path'),
 	request = require('request'),
 	colors = require('colors'),
 	querystring = require('querystring'),
@@ -22,6 +24,8 @@ var http = require('http'),
 
 
 module.exports = function (port) {
+
+	var subPath = ''
 
 	var server = http.createServer()
 
@@ -49,20 +53,18 @@ module.exports = function (port) {
 		var file_path = get_parse(req.url).getPath()
 		console.log((file_path).gray,STATIC_SOURCE.indexOf(mime.lookup(file_path)))
 		
-		if(file_path == process.cwd()+'/'){
+		var targetIndex = path.resolve(file_path,'index.html')
+		
+		if(fs.existsSync(targetIndex)){
+			// console.log(file_path.replace(process.cwd(),''))
+			subPath = file_path.replace(process.cwd(),'')
+			console.log(('cwd:'+process.cwd()).magenta)
+			console.log(('sub-path:'+subPath).magenta)
 			console.log(('redirect to index.html').magenta)
-			file_path = file_path+'index.html'
+			file_path = targetIndex
 		}
 
-		// if(!~STATIC_SOURCE.indexOf(mime.lookup(file_path)) && !~file_path.indexOf('/c/') ){
-		// 	console.log(('redirect to index.html').magenta)
-		// 	file_path = process.cwd()+'/index.html'
-		// 	console.log(file_path)
-		// }else if(~file_path.indexOf('.js')){
-		// 	console.log(process.cwd(),'----')
-		// 	file_path = process.cwd()+'/dist'+file_path.split('/dist')[1]
-		// 	console.log(file_path)
-		// }
+	
 		
 		
 		// 静态文件过滤
@@ -100,12 +102,12 @@ module.exports = function (port) {
 	 * [mock 数据]
 	 */
 	 var mock_static_fn = function (req,res,mock_root) {
-
-	 	// console.log(process.cwd(),mock_root,req.url+'.json')
-	 	// console.log(req.url.yellow+'----')
-	 	// var mock_path = '/c/'+req.url.split('/c/')[1]
-	 	mock_path = process.cwd()+mock_root+req.url+'.json'
-	 	// console.log(mock_path)
+	 	// console.log(process.cwd(),mock_root,req.url,path.resolve(process.cwd(),mock_root)+req.url+'.json')
+	 	
+	 	mock_path = path.resolve(process.cwd(),mock_root)+req.url+'.json'
+	 	subPath && (mock_path = mock_path.replace(subPath,'/'))
+	 	console.log(mock_path.green)
+ 		
  		staticSource.getSource(mock_path,function(data,mock_path){
  			
  			data = data.toString()
@@ -195,7 +197,7 @@ module.exports = function (port) {
 			}
 			
 		}
-
+		console.log(req.headers.domain)
 		console.log((req.headers.domain+req.url).green)
 		console.log(typeof data === 'string' ? (data).yellow : (JSON.stringify(data)).yellow)
 		request(options)
