@@ -104,9 +104,11 @@ module.exports = function (port) {
 	 var mock_static_fn = function (req,res,mock_root) {
 	 	// console.log(process.cwd(),mock_root,req.url,path.resolve(process.cwd(),mock_root)+req.url+'.json')
 	 	
+	 	mock_root[0] != '.' && (mock_root = '.'+mock_root)
 	 	mock_path = path.resolve(process.cwd(),mock_root)+req.url+'.json'
 	 	subPath && (mock_path = mock_path.replace(subPath,'/'))
-	 	console.log(mock_path.green)
+	 	console.log(subPath,mock_path.green)
+
  		
  		staticSource.getSource(mock_path,function(data,mock_path){
  			
@@ -200,6 +202,7 @@ module.exports = function (port) {
 		console.log(req.headers.domain)
 		console.log((req.headers.domain+req.url).green)
 		console.log(typeof data === 'string' ? (data).yellow : (JSON.stringify(data)).yellow)
+		// console.log(options)
 		request(options)
 			.on('error', function(err) {
 				console.log(JSON.stringify(err).red)
