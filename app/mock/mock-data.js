@@ -42,6 +42,7 @@ function mockData(value,arr_range,mock_path) {
         case util.isArray(value) :
             data = [];
             
+            
             var min = arr_range[0]
             var max = arr_range[1]
             var mockTarget = value[0]
@@ -250,11 +251,6 @@ function convert_val(val,type,type_arg) {
     return val
 }
 
-/**
- * [uniq 过滤输出去重]
- * @param  {[Array]} data [Array]
- * @return {[Array]}      [Array]
- */
 function uniq(data){
     return data.reduce((newarr,val)=>{
             if(!~newarr.indexOf(val))  newarr.push(val)
