@@ -71,7 +71,7 @@ module.exports = function (port) {
 		
 		
 		// 静态文件过滤
-		if(~STATIC_SOURCE.indexOf(mime.lookup(filePath))){
+		if(~STATIC_SOURCE.indexOf(mime.lookup(filePath))&&!req.headers.domain){
 
 			async.series([
 				// 设置缓存 ，已缓存、304
@@ -86,7 +86,7 @@ module.exports = function (port) {
 	})
 
 	router.use( (req, res,next) => {
-		// console.log(req.headers)
+		// console.log(req.headers.mock,'======')
 
 		if(req.headers.mock){
 			if(req.headers.mock+'' === 'true'){
@@ -164,15 +164,30 @@ module.exports = function (port) {
 	 */
 	var requestMethod = (req,res) => {
 		var target = req.headers.domain
+		var recookieDomain = req.headers['recookie-domain']
 		delete req.headers.host
 		delete req.headers.domain
+		delete req.headers['recookie-domain']
 		// [代理请求]
-		nodeHttpProxyModule(target,req,res)
+		nodeHttpProxyModule(target,req,res,recookieDomain)
 	}
 
-	function nodeHttpProxyModule(target,req,res){
+	function nodeHttpProxyModule(target,req,res,recookieDomain){
 		console.log((target+req.url).green)
-		proxy.web(req, res, { target: target }, function(err) { 
+		var cookieDomainRewrite = {}
+		
+		if(recookieDomain){
+			recookieDomain = recookieDomain.split('|')
+			cookieDomainRewrite[recookieDomain[0]] = recookieDomain[1]
+			console.log(('recookie-domain: '+JSON.stringify(cookieDomainRewrite)).green)
+		}
+		
+		
+		req.headers.referer = target
+		proxy.web(req, res, { 
+			target: target,
+			cookieDomainRewrite:cookieDomainRewrite
+		}, function(err) { 
 				console.log(String(err).red)
 				var data = {
 					'message':'后台接口错误'+String(err),

@@ -13,14 +13,8 @@ var promise_param = (req)=>{
 				resolve(req.query_param)
 			break;
 			case 'put':
-				post_parse(req,data=>{resolve(data)})
-			break;
 			case 'delete':
-				post_parse(req,data=>{resolve(data)})
-			break;
 			case 'update':
-				post_parse(req,data=>{resolve(data)})
-			break;
 			case 'post':
 				post_parse(req,data=>{resolve(data)})
 			break;
