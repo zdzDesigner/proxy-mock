@@ -18,6 +18,40 @@
     如你要请求接口为 /active/info
     那要在 "/dev/mock"目录下新建 active目录 ，并新建info.json文件
     即最终目录为 /dev/mock/active/info.json
+
+### 目录设置1
+    接口中相同的url但不同的方法
+    如 URL：/active/info 接口有两个方法 GET PUT
+    则可建立两个文件, 
+```js
+/dev/mock/active/info.json
+/dev/mock/active/info[put].json
+    // mock服务会优先匹配带有方法（即：info[METHOD].json）规则文件，
+    // 如果没有则取默认的info.json文件 
+    // /dev/mock/为mock配置的根路径
+```
+### 目录设置2
+    适应restful请求，url中的字段会成为变量即：
+    URL: /get/user/{id}/info => 发起请求 /get/user/224234/info
+    基于这种方式我们的路径又该如何创建呐？
+```js
+/dev/mock/get/user/{id}/info.json  
+// 直接创建即可 
+// /dev/mock/为mock配置的根路径
+```
+### 目录设置3
+    有些请求会在URL添加query参数,即：
+    URL: /get/user/info?id=323423 
+    针对这种请求文件路径如下
+```js
+/dev/mock/get/user/info.json      
+// 此时 服务接收的请求依然是/get/user/info?id=323423 
+// 会根据 ? 分割,读取 /dev/mock/get/user/info.json规则文件，
+// 同时会把参数 {id:323423} compile到文件配置规则中
+```
+
+
+### DEMO
     其中 info.json 中的数据即是接口文档中约定的数据 dome如下
 ```json
     {
