@@ -20,8 +20,8 @@
     即最终目录为 /dev/mock/active/info.json
 
 ### 目录设置1
-    接口中相同的url但不同的方法
-    如 URL：/active/info 接口有两个方法 GET PUT
+    接口中相同的URL但不同的方法
+    如 url：/active/info 接口有两个方法 GET PUT
     则可建立两个文件, 
 ```js
 /dev/mock/active/info.json
@@ -31,8 +31,8 @@
     // /dev/mock/为mock配置的根路径
 ```
 ### 目录设置2
-    适应restful请求，url中的字段会成为变量即：
-    URL: /get/user/{id}/info => 发起请求 /get/user/224234/info
+    适应restful请求，URL中的字段会成为变量即：
+    url: /get/user/{id}/info => 发起请求 /get/user/224234/info
     基于这种方式我们的路径又该如何创建呐？
 ```js
 /dev/mock/get/user/{id}/info.json  
@@ -41,7 +41,7 @@
 ```
 ### 目录设置3
     有些请求会在URL添加query参数,即：
-    URL: /get/user/info?id=323423 
+    url: /get/user/info?id=323423 
     针对这种请求文件路径如下
 ```js
 /dev/mock/get/user/info.json      
