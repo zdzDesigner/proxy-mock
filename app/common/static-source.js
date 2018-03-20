@@ -18,26 +18,22 @@
      *      3. 返回值转字符串
      */
 
-    var getSource = function(path,callback){
-
-        fs.exists(path,function(exist){
-
-            if(!exist ) {
-                console.log('访问'+path+'文件不存在')
-                return
-            }
-            
-            fs.readFile(path,function(err,data){
-                 if(err){
-                    console.log('读取'+path+'文件错误')
+    var getSource = function(path,encode){
+        encode = encode || 'utf8'
+        return new Promise(function(resolve,reject){
+            fs.exists(path,function(exist){
+                if(!exist) {
+                    reject('访问'+path+'文件不存在')
                     return
-                 }
-                callback(data,path)
+                }
+                fs.readFile(path,function(err,data){
+                    err ? reject('读取'+path+'文件错误') 
+                        : resolve({data:data.toString(encode),path})
+                    
+                })
             })
-            
         })
-        
-    };
+    }
     
     // 发送静态文件
     var sendStaticSource = function(path,res){

@@ -20,15 +20,15 @@ var querystring = require('querystring')
 
 
 
-var get_parse = function (path) {
-	var url_data = url.parse(path)
+var getParse = function (path) {
+	var urlData = url.parse(path)
 	return {
-		param : querystring.parse(url_data.query),
-		pathname : url_data.pathname,
+		param : querystring.parse(urlData.query),
+		pathname : urlData.pathname,
 		getPath : function (filename) {
-			return PUBLIC_PATH + url_data.pathname + (filename||'')
+			return PUBLIC_PATH + urlData.pathname + (filename||'')
 		}
 	}
 }
 
-module.exports = get_parse
+module.exports = getParse

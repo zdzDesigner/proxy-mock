@@ -24,18 +24,24 @@ var util = require('util'),
  * @return {[type]}       [description]
  */
 var index
-function mockData(value,arr_range,mock_path) {
+function mockData(value, arrRange, mockPath, query) {
     
     var data
      
     switch (true) {
 
         case util.isString(value) :
-            data = getStringValue(value,index,mock_path)
+            // console.log(hasQuery(query,value))
+            value = hasQuery(query,value)
+            
+            // console.log(value)
+            data = getStringValue(value, index, mockPath, query)
             data = isNaN(+data) ? data : +data
             break;
 
         case util.isNumber(value):
+            // console.log(hasQuery(query,value))
+            value = hasQuery(query,value)
             data = getNumberValue(value)
             break;
         
@@ -43,8 +49,8 @@ function mockData(value,arr_range,mock_path) {
             data = [];
             
             
-            var min = arr_range[0]
-            var max = arr_range[1]
+            var min = arrRange[0]
+            var max = arrRange[1]
             var mockTarget = value[0]
             var size = Mock.Random.integer(min,max);
 
@@ -56,14 +62,14 @@ function mockData(value,arr_range,mock_path) {
             
             for (var i = 0; i < size; i++) {
                 index = i+1
-                data.push(mockData(mockTarget,[min,max],mock_path));
+                data.push(mockData(mockTarget, [min,max], mockPath, query));
             }
             
             data = uniq(data)
 
             if(data.length < size){
                 for(var j =0;j<size*9;j++){
-                    data.push(mockData(mockTarget,[min,max],mock_path));
+                    data.push(mockData(mockTarget, [min,max], mockPath, query));
                 }
                 data = uniq(data)
             }
@@ -74,7 +80,7 @@ function mockData(value,arr_range,mock_path) {
             data = {};
             for (var key in value) {
                 if (value.hasOwnProperty(key)) {
-                    data[key] = mockData(value[key],arr_range,mock_path);
+                    data[key] = mockData(value[key], arrRange, mockPath, query);
                 }
             }
             break;
@@ -90,15 +96,17 @@ function mockData(value,arr_range,mock_path) {
  *                  $add    $add(加的内容)|cname
  * @return {[type]}       [String]
  */
-var getStringValue = function (msg,index,mock_path) {
-    // console.log(msg)
+var getStringValue = function (msg,index,mockPath, query) {
+    
     var reg = /\{\{(.+?)\}\}/g;
     var reg_match_arr = msg.match(reg)
+    
     if(reg_match_arr){
         // console.log(reg_match_arr)
         reg_match_arr.forEach(function(value,i){
-            var str = getStringType(value,index,mock_path)
-            // console.log(value,str)
+            // console.log('value --',value)
+            var str = getStringType(value,index,mockPath)
+            
             if(~msg.indexOf(value)){
                 msg=msg.replace(value,str)
             }
@@ -110,6 +118,7 @@ var getStringValue = function (msg,index,mock_path) {
                 + Mock.Random.string('number',1,3)
                 + Mock.Random.string('lower',1,10)    
     }
+    // console.log('==msg==',msg)
     
     return msg
 
@@ -126,12 +135,11 @@ var getStringValue = function (msg,index,mock_path) {
  *                  url     URL地址
  */
 
-var getStringType = function (value,index,mock_path) {
+var getStringType = function (value,index,mockPath) {
     var reg = /\{\{(.+?)\}\}/,
         data
-
-    value = value.match(reg)[1].trim()
     
+    value = value.match(reg)[1].trim()
     return warn(function () {
 
     switch(true){
@@ -190,8 +198,8 @@ var getStringType = function (value,index,mock_path) {
             data = Mock.Random.color()
         break;
 
-        case value.toLowerCase().match(/yyyy|mm|dd|hh|ss/g) != null:
-            // console.log(value.toLowerCase().yellow);
+        case value.toLowerCase().match(/yyyy|mm|dd|hh|ss/g) 
+                && value.toLowerCase().match(/yyyy|mm|dd|hh|ss/g).length>=2 :
             // console.log('yyyy|mm|dd|hh|ss'.yellow);
             data = Mock.Random.date(value)
             if(value.toLowerCase().match(/\./g)){
@@ -209,13 +217,14 @@ var getStringType = function (value,index,mock_path) {
         break;
 
         default :
+            // console.log('convert_val default==',value)
             data = convert_val(value) 
         break;
 
     }
     return data
 
-    },mock_path)
+    },mockPath)
 
     // }catch(e){
     //     console.log('Mock 参数错误 ：'.red)
@@ -238,15 +247,15 @@ function convert_val(val,type,type_arg) {
         val = eval("("+val+")")
     }
 
+    // console.log('convert_val',val)
+
     switch(type){
         case 'to_fixed':
             val = ((Math.random()*(+val[1]-val[0]))+val[0]).toFixed(type_arg)
         break;
-        default:
-            val = val[Math.floor(Math.random()*val.length)]
-            // console.log(type,type_arg)
-            // console.log(typeof val)
-        break;
+    }
+    if(util.isArray(val)){
+        val = val[Math.floor(Math.random()*val.length)]
     }
     return val
 }
@@ -268,6 +277,20 @@ var getNumberValue = function (value) {
 }
 
 
+var hasQuery = function(query,template){
+
+    var reg = /\[@(.+?)\]/,key 
+    var matched = template.match(reg)
+    if(matched){
+        key = template.match(reg)[1]    
+        template = template.replace(reg,query[key]||'')
+    }
+    
+
+    return template
+    
+}
+
 
 // console.log(curry)
 var map = curry(function (callback , arr) {
@@ -278,7 +301,7 @@ var clear_mock = function (value) {
     delete(value['no-mock'])
     return value
 }
-var cry_clear_attr = curry(function (value,attr) {
+var cryClearAttr = curry(function (value,attr) {
     delete(value[attr])
     return value
 })
@@ -287,39 +310,39 @@ var keys = ['no-mock','mock-length','mock-delay']
 
 
 // 输出
-module.exports = function(value,mock_path) {
+module.exports = function(value,mockPath,query) {
 
-    var arr_range = [30,30],
+    var arrRange = [30,30],
         delay=0,
         data
 
-    var clear_attr = cry_clear_attr(value)    
+    var clearAttr = cryClearAttr(value)    
 
     if(util.isObject(value) && value['no-mock']){
-        data = clear_attr('no-mock')
+        data = clearAttr('no-mock')
 
     }else{
         
         if(util.isObject(value) && value['mock-length']){
-            arr_range = JSON.parse(value['mock-length'])
-            arr_range = arr_range.slice(0,2)
-            if(arr_range.length ==1){
-                arr_range.push(arr_range[0])
+            arrRange = JSON.parse(value['mock-length'])
+            arrRange = arrRange.slice(0,2)
+            if(arrRange.length ==1){
+                arrRange.push(arrRange[0])
             }
             // delete(value['mock-length'])
-            data = clear_attr('mock-length')
+            data = clearAttr('mock-length')
         }
         if(util.isObject(value) && value['mock-delay']){
             delay = +value['mock-delay']
             // delete(value['mock-length'])
-            data = clear_attr('mock-delay')
+            data = clearAttr('mock-delay')
         }
         // data = map(function (attr) {
         //     delete(value[attr])
         //     return value
         // })(keys)[0]
         // console.log(data)
-        data = mockData(value,arr_range,mock_path)
+        data = mockData(value,arrRange,mockPath,query)
     }
     
     // console.log(data)

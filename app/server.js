@@ -20,6 +20,7 @@ var http = require('http'),
 	staticSource = require('./common/static-source'),
 	expires = require('./common/expires'),
 	redirect = require('./common/redirect'),
+	dirs = require('./common/dirs'),
 	warn = require('./common/warn')
 
 
@@ -54,7 +55,7 @@ module.exports = function (port) {
 	router.use((req, res,next) => {
 		
 		var filePath = getParse(req.url).getPath()
-		console.log((filePath).gray,STATIC_SOURCE.indexOf(mime.lookup(filePath)))
+		// console.log((filePath).gray,STATIC_SOURCE.indexOf(mime.lookup(filePath)))
 		
 		var targetIndex = path.resolve(filePath,'index.html')
 		
@@ -90,7 +91,7 @@ module.exports = function (port) {
 
 		if(req.headers.mock){
 			if(req.headers.mock+'' === 'true'){
-				mock_fn(req,res)	
+				mockFn(req,res)	
 			}else{
 				mockStaticFn(req,res,req.headers.mock)
 			}
@@ -104,39 +105,66 @@ module.exports = function (port) {
 	/**
 	 * [mock 数据]
 	 */
-	 var mockStaticFn = function (req,res,mockRoot) {
+	var mockStaticFn = function (req,res,mockRoot) {
 	 	// console.log(process.cwd(),mockRoot,req.url,path.resolve(process.cwd(),mockRoot)+req.url+'.json')
-	 	
+	 	// console.log('==',getParse(req.url))
+	 	var urlParsed = getParse(req.url)
+		var query = urlParsed.param
+		var pathname = urlParsed.pathname
 	 	mockRoot[0] != '.' && (mockRoot = '.'+mockRoot)
-	 	mockPath = path.resolve(process.cwd(),mockRoot)+req.url+'.json'
+
+	 	// console.log('dirs: ',dirs(mockRoot), pathname)
+	 	var reg = dirs(mockRoot).filter(function(item){
+	 		var regStr = item.replace(/\{(.+)\}/,'(.+)')
+	 		if(pathname.match(new RegExp(regStr))){
+	 			return true
+	 		}
+	 		
+	 	})
+	 	
+	 	reg[0] && (pathname = reg[0])
+	 	mockPath = path.resolve(process.cwd(),mockRoot)+pathname+'.json'
+	 	// console.log('==',mockPath)
 	 	subPath && (mockPath = mockPath.replace(subPath,'/'))
 	 	console.log(subPath,mockPath.green)
-
+	 	
+	 	
+	 	
  		
- 		staticSource.getSource(mockPath,function(data,mockPath){
- 			
- 			data = data.toString()
- 			data = warn(function () {
- 				data = typeof data ==='string' && JSON.parse(data)
- 				return data
- 			},mockPath)
+ 		var methodMockPath = mockPath.replace('.json',`[${req.method.toLowerCase()}].json`)
 
-	 		mockData(data,mockPath).then(function(data){
-	 			res.writeHead(200,{
-		  			'content-type':'application/json;charset=utf8'
-		  		})
-		 		res.end(JSON.stringify(data))	
+ 		staticSource.getSource(methodMockPath)
+ 			.then(function(ret){
+ 					console.log('method: ',methodMockPath)
+					return Promise.resolve(ret)		 		
+	 			},function(err){
+	 				return staticSource.getSource(mockPath)
+	 		}).then(function(ret){
+	 			var mockPath = ret.path
+	 			var data = ret.data
+
+	 			data = warn(function () {
+	 				data = typeof data ==='string' && JSON.parse(data)
+	 				return data
+	 			},mockPath)
+
+		 		mockData(data,mockPath,query).then(function(data){
+		 			res.writeHead(200,{
+			  			'content-type':'application/json;charset=utf8'
+			  		})
+			 		res.end(JSON.stringify(data))	
+		 		})
+	 		}).catch(function(err){
+	 			console.log(err)
 	 		})
-	 		
- 		})
 
-	 }
+	}
 
 
 	 /**
 	 * [mock 数据]
 	 */
-	 var mock_fn = function (req,res) {
+	 var mockFn = function (req,res) {
 
 	 	promiseParam(req).then(data=>{
 
