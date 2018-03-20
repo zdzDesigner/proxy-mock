@@ -128,27 +128,26 @@ module.exports = function (port) {
 	 	subPath && (mockPath = mockPath.replace(subPath,'/'))
 	 	console.log(subPath,mockPath.green)
 	 	
-	 	
-	 	
- 		
  		var methodMockPath = mockPath.replace('.json',`[${req.method.toLowerCase()}].json`)
 
- 		staticSource.getSource(methodMockPath)
+ 		staticSource.getSource(methodMockPath, mockPath)
  			.then(function(ret){
  					console.log('method: ',methodMockPath)
 					return Promise.resolve(ret)		 		
-	 			},function(err){
-	 				return staticSource.getSource(mockPath)
+	 			},function(defaultPath){
+	 				// console.log('===++',defaultPath)
+	 				return staticSource.getSource(defaultPath)
 	 		}).then(function(ret){
-	 			var mockPath = ret.path
+	 			var finalPath = ret.path
 	 			var data = ret.data
 
 	 			data = warn(function () {
 	 				data = typeof data ==='string' && JSON.parse(data)
 	 				return data
-	 			},mockPath)
+	 			},finalPath)
 
-		 		mockData(data,mockPath,query).then(function(data){
+	 			// console.log('===--',finalPath)
+		 		mockData(data,finalPath,query).then(function(data){
 		 			res.writeHead(200,{
 			  			'content-type':'application/json;charset=utf8'
 			  		})

@@ -1,8 +1,48 @@
 {
-  "name": "proxy-mock",
-  "version": "0.4.1",
-  "description": "node proxy and mock data",
-  "main": "index.js",
+  "_cnpm_publish_time": 1481704378368,
+  "_from": "proxy-mock",
+  "_id": "proxy-mock@0.4.2",
+  "_inBundle": false,
+  "_integrity": "sha512-6+PRkr0iaXOb78ydPKcyQL6ghIjmbCk8sKiQ+LIGrmC/01hXwhks7t8Ua6dccQNTRTIg6xpJTr+7jqKLh68fXQ==",
+  "_location": "/proxy-mock",
+  "_nodeVersion": "4.5.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/proxy-mock-0.1.6.tgz_1481704376409_0.7192636344116181"
+  },
+  "_npmUser": {
+    "name": "zdz-designer",
+    "email": "1696498456@qq.com"
+  },
+  "_npmVersion": "2.15.9",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "proxy-mock",
+    "name": "proxy-mock",
+    "escapedName": "proxy-mock",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/proxy-mock/-/proxy-mock-0.4.1.tgz",
+  "_shasum": "657b09485eaebbb155f25873fdecab4b19053d71",
+  "_spec": "proxy-mock",
+  "_where": "/Users/zdzdesigner",
+  "author": {
+    "name": "zdzDesigner"
+  },
+  "bin": {
+    "proxy-mock": "./bin/proxy-mock"
+  },
+  "bugs": {
+    "url": "https://github.com/zdzDesigner/proxy-mock/issues"
+  },
+  "bundleDependencies": false,
   "dependencies": {
     "async": "1.5.0",
     "colors": "1.1.2",
@@ -15,58 +55,39 @@
     "router": "1.1.3",
     "yargs": "4.6.0"
   },
+  "deprecated": false,
+  "description": "node proxy and mock data",
   "devDependencies": {},
-  "bin": {
-    "proxy-mock": "./bin/proxy-mock"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/zdzDesigner/proxy-mock.git"
-  },
-  "keywords": [
-    "proxy",
-    "mock"
-  ],
-  "author": {
-    "name": "zdzDesigner"
-  },
-  "license": "ISC",
-  "gitHead": "f9fe30c650cb810ec17e6bad2506b81a68d2257f",
-  "bugs": {
-    "url": "https://github.com/zdzDesigner/proxy-mock/issues"
-  },
-  "homepage": "https://github.com/zdzDesigner/proxy-mock#readme",
-  "_id": "proxy-mock@0.1.6",
-  "_shasum": "3d2d2ea9f6cd4e8e7011c371a33e5ef76a0407e2",
-  "_from": "proxy-mock@*",
-  "_npmVersion": "2.15.9",
-  "_nodeVersion": "4.5.0",
-  "_npmUser": {
-    "name": "zdz-designer",
-    "email": "1696498456@qq.com"
-  },
+  "directories": {},
   "dist": {
     "shasum": "3d2d2ea9f6cd4e8e7011c371a33e5ef76a0407e2",
     "size": 23310,
     "noattachment": false,
     "tarball": "http://registry.npm.taobao.org/proxy-mock/download/proxy-mock-0.1.6.tgz"
   },
+  "gitHead": "f9fe30c650cb810ec17e6bad2506b81a68d2257f",
+  "homepage": "https://github.com/zdzDesigner/proxy-mock#readme",
+  "keywords": [
+    "proxy",
+    "mock"
+  ],
+  "license": "ISC",
+  "main": "index.js",
   "maintainers": [
     {
       "name": "zdz-designer",
       "email": "1696498456@qq.com"
     }
   ],
-  "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/proxy-mock-0.1.6.tgz_1481704376409_0.7192636344116181"
-  },
-  "directories": {},
-  "_resolved": "https://registry.npm.taobao.org/proxy-mock/download/proxy-mock-0.1.6.tgz",
+  "name": "proxy-mock",
   "publish_time": 1481704378368,
-  "_cnpm_publish_time": 1481704378368
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zdzDesigner/proxy-mock.git"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.4.1"
 }

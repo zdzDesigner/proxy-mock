@@ -18,12 +18,12 @@
      *      3. 返回值转字符串
      */
 
-    var getSource = function(path,encode){
+    var getSource = function(path, defaultPath, encode){
         encode = encode || 'utf8'
         return new Promise(function(resolve,reject){
             fs.exists(path,function(exist){
                 if(!exist) {
-                    reject('访问'+path+'文件不存在')
+                    reject(defaultPath)
                     return
                 }
                 fs.readFile(path,function(err,data){
