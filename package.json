@@ -89,5 +89,5 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "0.4.1"
+  "version": "0.4.2"
 }
