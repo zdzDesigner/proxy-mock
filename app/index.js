@@ -1,4 +1,3 @@
-
 var http = require('http'),
 	fs = require('fs'),
 	path = require('path'),
@@ -11,18 +10,18 @@ var http = require('http'),
 	router = require('router')(),
 	async = require('async'),
 	mime = require('mime'),
-	mockData = require('./mock/mock-data'),
+	mock = require('./service').mock,
+	findFile = require('./service').findFile,
 	config = require('./config'),
 
-	getParse = require('./common/get-parse'),
-	promiseParam = require('./common/promise-param'),
+	getParse = require('./util/get-parse.js'),
+	promiseParam = require('./util/promise-param.js'),
 	
-	staticSource = require('./common/static-source'),
-	expires = require('./common/expires'),
-	redirect = require('./common/redirect'),
-	dirs = require('./common/dirs'),
-	warn = require('./common/warn')
-
+	staticSource = require('./util/static-source.js'),
+	expires = require('./util/expires.js'),
+	redirect = require('./util/redirect.js'),
+	dirs = require('./util/dirs.js'),
+	warn = require('./util/warn.js')
 
 
 
@@ -88,12 +87,11 @@ module.exports = function (port) {
 
 	router.use( (req, res,next) => {
 		// console.log(req.headers.mock,'======')
-
 		if(req.headers.mock){
 			if(req.headers.mock+'' === 'true'){
 				mockFn(req,res)	
 			}else{
-				mockStaticFn(req,res,req.headers.mock)
+				mockStaticFn(req, res, req.headers.mock)
 			}
 			
 		}else{
@@ -106,38 +104,12 @@ module.exports = function (port) {
 	 * [mock 数据]
 	 */
 	var mockStaticFn = function (req,res,mockRoot) {
-	 	// console.log(process.cwd(),mockRoot,req.url,path.resolve(process.cwd(),mockRoot)+req.url+'.json')
-	 	// console.log('==',getParse(req.url))
-	 	var urlParsed = getParse(req.url)
-		var query = urlParsed.param
-		var pathname = urlParsed.pathname
-	 	mockRoot[0] != '.' && (mockRoot = '.'+mockRoot)
 
-	 	// console.log('dirs: ',dirs(mockRoot), pathname)
-	 	var reg = dirs(mockRoot).filter(function(item){
-	 		var regStr = item.replace(/\{(.+)\}/,'(.+)')
-	 		if(pathname.match(new RegExp(regStr))){
-	 			return true
-	 		}
-	 		
-	 	})
-	 	
-	 	reg[0] && (pathname = reg[0])
-	 	mockPath = path.resolve(process.cwd(),mockRoot)+pathname+'.json'
-	 	// console.log('==',mockPath)
-	 	subPath && (mockPath = mockPath.replace(subPath,'/'))
-	 	console.log(subPath,mockPath.green)
-	 	
- 		var methodMockPath = mockPath.replace('.json',`[${req.method.toLowerCase()}].json`)
-
- 		staticSource.getSource(methodMockPath, mockPath)
+ 		var pathObj = findFile(req, mockRoot)
+ 		
+ 		pathObj.onePath && staticSource.getSource(pathObj.onePath)
  			.then(function(ret){
- 					console.log('method: ',methodMockPath)
-					return Promise.resolve(ret)		 		
-	 			},function(defaultPath){
-	 				// console.log('===++',defaultPath)
-	 				return staticSource.getSource(defaultPath)
-	 		}).then(function(ret){
+ 			
 	 			var finalPath = ret.path
 	 			var data = ret.data
 
@@ -147,7 +119,7 @@ module.exports = function (port) {
 	 			},finalPath)
 
 	 			// console.log('===--',finalPath)
-		 		mockData(data,finalPath,query).then(function(data){
+		 		mock(data,finalPath,pathObj.query).then(function(data){
 		 			res.writeHead(200,{
 			  			'content-type':'application/json;charset=utf8'
 			  		})
@@ -173,7 +145,7 @@ module.exports = function (port) {
 	 			// console.log(data)
 	 		}
 
-	 		data = mockData(data)
+	 		data = mock(data)
 	 		// console.log(data)
 	 		res.writeHead(200,{
 	  			'content-type':'application/json;charset=utf8'

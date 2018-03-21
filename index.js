@@ -1,1 +1,1 @@
-require('./app/server')(8080)
+require('./app/index.js')(8080)

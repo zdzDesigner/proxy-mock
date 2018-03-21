@@ -1,9 +1,9 @@
 {
   "_cnpm_publish_time": 1481704378368,
   "_from": "proxy-mock",
-  "_id": "proxy-mock@0.4.2",
+  "_id": "proxy-mock@0.4.3",
   "_inBundle": false,
-  "_integrity": "sha512-6+PRkr0iaXOb78ydPKcyQL6ghIjmbCk8sKiQ+LIGrmC/01hXwhks7t8Ua6dccQNTRTIg6xpJTr+7jqKLh68fXQ==",
+  "_integrity": "sha512-MiqotWEpNAAKgwTJ2xEVc4hBvV3zTIAvCZIDGG8u85vgukKWU2TrHYOi5vof3FupY3XcQrRcFsZE8zb469k5tw==",
   "_location": "/proxy-mock",
   "_nodeVersion": "4.5.0",
   "_npmOperationalInternal": {
@@ -27,10 +27,11 @@
     "fetchSpec": "latest"
   },
   "_requiredBy": [
-    "#USER"
+    "#USER",
+    "/"
   ],
-  "_resolved": "https://registry.npmjs.org/proxy-mock/-/proxy-mock-0.4.1.tgz",
-  "_shasum": "657b09485eaebbb155f25873fdecab4b19053d71",
+  "_resolved": "https://registry.npmjs.org/proxy-mock/-/proxy-mock-0.4.2.tgz",
+  "_shasum": "3722a13e5dac75a506fcf8105d5651a1118bc363",
   "_spec": "proxy-mock",
   "_where": "/Users/zdzdesigner",
   "author": {
@@ -89,5 +90,5 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "0.4.2"
+  "version": "0.4.3"
 }

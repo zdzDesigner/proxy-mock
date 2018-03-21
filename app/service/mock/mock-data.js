@@ -5,8 +5,8 @@
  */
 var util = require('util'),
     curry = require('lodash.curry'),
-    Mock = require('./mock'),
-    warn = require('../common/warn'),
+    Mock = require('./mock.js'),
+    warn = require('../../util/warn.js'),
     Letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
 /**
@@ -32,7 +32,7 @@ function mockData(value, arrRange, mockPath, query) {
 
         case util.isString(value) :
             // console.log(hasQuery(query,value))
-            value = hasQuery(query,value)
+            value = hasQuery(query, value)
             
             // console.log(value)
             data = getStringValue(value, index, mockPath, query)
@@ -41,8 +41,8 @@ function mockData(value, arrRange, mockPath, query) {
 
         case util.isNumber(value):
             // console.log(hasQuery(query,value))
-            value = hasQuery(query,value)
-            data = getNumberValue(value)
+            value = hasQuery(query, value)
+            data = getNumberValue(value, index)
             break;
         
         case util.isArray(value) :
@@ -171,6 +171,7 @@ var getStringType = function (value,index,mockPath) {
         break;
 
         case value === 'index':
+        console.log(value)
             data = index
         break;
 
@@ -272,7 +273,7 @@ function uniq(data){
  *                        {code:1000} => 1000 
  * @return {[type]}       [Number]
  */
-var getNumberValue = function (value) {
+var getNumberValue = function (value, index) {
     return  Mock.Random.integer(1, 100)
 }
 
@@ -280,6 +281,7 @@ var getNumberValue = function (value) {
 var hasQuery = function(query,template){
 
     var reg = /\[@(.+?)\]/,key 
+    template = template+''
     var matched = template.match(reg)
     if(matched){
         key = template.match(reg)[1]    
@@ -296,12 +298,8 @@ var hasQuery = function(query,template){
 var map = curry(function (callback , arr) {
     return arr.map(callback)    
 })
-// has_mock 
-var clear_mock = function (value) {
-    delete(value['no-mock'])
-    return value
-}
-var cryClearAttr = curry(function (value,attr) {
+
+var cclearAttr = curry(function (value,attr) {
     delete(value[attr])
     return value
 })
@@ -312,37 +310,34 @@ var keys = ['no-mock','mock-length','mock-delay']
 // 输出
 module.exports = function(value,mockPath,query) {
 
-    var arrRange = [30,30],
-        delay=0,
-        data
+    var arrRange = [30, 30],
+        delay = 0,
+        clearAttr = cclearAttr(value),
+        data, mockLength, mockDelay, noMock
 
-    var clearAttr = cryClearAttr(value)    
 
-    if(util.isObject(value) && value['no-mock']){
-        data = clearAttr('no-mock')
-
-    }else{
+    if(util.isObject(value)){
         
-        if(util.isObject(value) && value['mock-length']){
-            arrRange = JSON.parse(value['mock-length'])
-            arrRange = arrRange.slice(0,2)
-            if(arrRange.length ==1){
-                arrRange.push(arrRange[0])
+        mockLength = value['mock-length']
+        mockDelay = value['mock-delay'] || 0
+        noMock = value['no-mock'] || false
+        clearAttr('no-mock')
+        clearAttr('mock-length')
+        clearAttr('mock-delay')
+
+        if(noMock) {
+            data = value
+        }else{
+            if(mockLength){
+                arrRange = JSON.parse(mockLength)
+                arrRange = arrRange.slice(0,2)
+                if(arrRange.length == 1){
+                    arrRange.push(arrRange[0])
+                }
             }
-            // delete(value['mock-length'])
-            data = clearAttr('mock-length')
+            data = mockData(value, arrRange, mockPath, query)
         }
-        if(util.isObject(value) && value['mock-delay']){
-            delay = +value['mock-delay']
-            // delete(value['mock-length'])
-            data = clearAttr('mock-delay')
-        }
-        // data = map(function (attr) {
-        //     delete(value[attr])
-        //     return value
-        // })(keys)[0]
-        // console.log(data)
-        data = mockData(value,arrRange,mockPath,query)
+        
     }
     
     // console.log(data)
@@ -350,6 +345,6 @@ module.exports = function(value,mockPath,query) {
     return new Promise(function(resolve,reject){
         setTimeout(function(){
             resolve(data)
-        },delay)
+        },+mockDelay)
     })
 }

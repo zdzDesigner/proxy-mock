@@ -1,4 +1,4 @@
-global.BASE_PATH = __dirname.replace('/app','')
+var path = require('path')
 global.PUBLIC_PATH = process.cwd()
 
 
