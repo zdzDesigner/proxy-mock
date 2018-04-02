@@ -62,14 +62,6 @@ const mockStaticFn = async function (req,res,pathObj) {
         'content-type':'application/json;charset=utf8'
     })
     res.end(JSON.stringify(ret))   
-            // console.log('===--',finalPath)
-            
-
-                
-                
-            
-        // }).catch(function(err){
-        //     console.log(err)
-        // })
+          
 
 }

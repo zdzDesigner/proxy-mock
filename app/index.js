@@ -107,27 +107,31 @@ module.exports = function (port) {
 	var mockStaticFn = function (req,res,mockRoot) {
 
  		var pathObj = findFile(req, mockRoot)
- 		pathObj.onePath && staticSource.getSource(pathObj.onePath)
- 			.then(function(ret){
- 			
-	 			var finalPath = ret.path
-	 			var data = ret.data
+ 		if(pathObj.onePath){
+ 			staticSource.getSource(pathObj.onePath)
+	 			.then(function(ret){
+	 			
+		 			var finalPath = ret.path
+		 			var data = ret.data
 
-	 			data = warn(function () {
-	 				data = typeof data ==='string' && JSON.parse(data)
-	 				return data
-	 			},finalPath)
+		 			data = warn(function () {
+		 				data = typeof data ==='string' && JSON.parse(data)
+		 				return data
+		 			},finalPath)
 
-	 			// console.log('===--',finalPath)
-		 		mock(data,finalPath,pathObj.query).then(function(data){
-		 			res.writeHead(200,{
-			  			'content-type':'application/json;charset=utf8'
-			  		})
-			 		res.end(JSON.stringify(data))	
+		 			// console.log('===--',finalPath)
+			 		mock(data,finalPath,pathObj.query).then(function(data){
+			 			res.writeHead(200,{
+				  			'content-type':'application/json;charset=utf8'
+				  		})
+				 		res.end(JSON.stringify(data))	
+			 		})
 		 		})
-	 		}).catch(function(err){
-	 			console.log(err)
-	 		})
+ 		}else{
+ 			res.writeHead(404)
+			res.end()
+ 		}
+ 		
 
 	}
 
