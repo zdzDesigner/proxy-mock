@@ -87,6 +87,7 @@ module.exports = function (port) {
 
 	router.use( (req, res,next) => {
 		// console.log(req.headers.mock,'======')
+		console.log('===',req.url,'===')
 		if(req.headers.mock){
 			if(req.headers.mock+'' === 'true'){
 				mockFn(req,res)	
@@ -106,7 +107,6 @@ module.exports = function (port) {
 	var mockStaticFn = function (req,res,mockRoot) {
 
  		var pathObj = findFile(req, mockRoot)
- 		
  		pathObj.onePath && staticSource.getSource(pathObj.onePath)
  			.then(function(ret){
  			

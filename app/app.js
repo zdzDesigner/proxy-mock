@@ -13,8 +13,9 @@ console.log(warn)
 
 app.use(static(staticPath))
 app.use(async function(ctx,next){
-    console.log(ctx.url,'===000============')
-    console.log(ctx.header.mock)
+
+    console.log('===',ctx.url,'===')
+    // console.log(ctx.header.mock)
     // console.log(ctx.req)
     await next()
 })
@@ -23,7 +24,7 @@ app.use(async function(ctx,next){
     if(mockRoot){
         let pathObj = findFile(ctx.req, mockRoot)
         let onePath = pathObj.onePath
-        console.log({onePath}) 
+        
         if(onePath) await mockStaticFn(ctx.req, ctx.res, pathObj)
         
     }

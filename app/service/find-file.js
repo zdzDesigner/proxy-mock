@@ -23,7 +23,7 @@ function fineFile(req, root){
     // console.log({onePath})
     if(!onePath){
         // console.log({rootPath, pathname})
-        var matchPath = getMatchPath(rootPath, pathname)
+        var matchPath = getMatchPath(rootPath, pathname, method)
         query = Object.assign(query, matchPath.params)
         // onePath = matchPath.pathname
         onePath = validPath(rootPath, matchPath.pathname, method, query)
@@ -32,7 +32,8 @@ function fineFile(req, root){
     if(!fs.existsSync(onePath)){
         onePath = ''
     }
-
+    console.log({onePath}) 
+    console.log('')
     return {
         query:query,
         onePath:onePath
@@ -105,16 +106,17 @@ function serialize(obj) {
  * @param  {[type]} pathname [请求url]
  * @return {[type]}          [资源地址]
  */
-function getMatchPath (mockRoot, pathname){
+function getMatchPath (mockRoot, pathname, method){
     var params = {}
     var reg = dirs(mockRoot).filter(function(item){
-        var regStr = item.replace(/\{(.+)\}/,'(.+)'),
+
+        var regStr = item.replace(/\{(.+)\}/,'(.+)').replace('[','\\[').replace(']','\\]'),
             regexp = new RegExp(regStr),
-            reqMatch = pathname.match(regexp),
+            reqMatch = pathname.match(regexp) || (pathname+method).match(regexp),
             key
 
-        // console.log(item, pathname)
-        // console.log(reqMatch)
+        // console.log(regStr)
+        // console.log(regStr, regexp ,pathname, pathname+method, reqMatch)
         if(reqMatch){
             key = item.match(regexp)[1].match(/\{(.+)\}/)[1]
             params[key] = clearLastToken(''+reqMatch[1]).join('') 
