@@ -12,6 +12,7 @@
 				  .argv
 
 	var httpServer = require('./../app/index.js')
+	// var httpServer = require('./../app/app.js')
 	httpServer(argv.p)
 	console.log(('proxy-mock start ......').green)
 	console.log(('proxy-mock start ....').green)
