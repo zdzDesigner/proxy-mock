@@ -68,11 +68,11 @@ module.exports = function (port) {
 		}
 
 	
-		
+		// console.log({filePath})
 		
 		// 静态文件过滤
-		if(~STATIC_SOURCE.indexOf(mime.lookup(filePath))&&!req.headers.domain){
-
+		if(~STATIC_SOURCE.indexOf(mime.lookup(filePath))){
+			
 			async.series([
 				// 设置缓存 ，已缓存、304
 				callback=>{ expires(req,res,filePath,callback)},
@@ -80,6 +80,7 @@ module.exports = function (port) {
 				callback=>{ staticSource.sendStaticSource(filePath,res)}
 			])
 		}else{
+			
 			next()
 		}
 		
