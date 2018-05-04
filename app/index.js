@@ -1,6 +1,7 @@
 var http = require('http'),
 	fs = require('fs'),
 	path = require('path'),
+	url = require('url'),
 	request = require('request'),
 	httpProxy = require('http-proxy'),
 	proxy = httpProxy.createProxyServer({}),
@@ -13,6 +14,7 @@ var http = require('http'),
 	mock = require('./service').mock,
 	findFile = require('./service').findFile,
 	config = require('./config'),
+
 
 	getParse = require('./util/get-parse.js'),
 	promiseParam = require('./util/promise-param.js'),
@@ -45,20 +47,28 @@ module.exports = function (port) {
 	server.listen(port)
 
 
+	router.use((req, res, next)=>{
+		console.log(req.url)
+		next()
+	})
+
 
 
 	/** 
 	 * [静态文件处理]
 	 *  若配置 nginx ，则有 nginx 处理
 	 */
-	router.use((req, res,next) => {
-		
+	router.use((req, res, next) => {
+		// var method = req.headers.
 		var filePath = getParse(req.url).getPath()
 		// console.log((filePath).gray,STATIC_SOURCE.indexOf(mime.lookup(filePath)))
 		
 		var targetIndex = path.resolve(filePath,'index.html')
-		
-		if(fs.existsSync(targetIndex)){
+			
+		// console.log(filePath,path.extname(filePath))
+
+		if(fs.existsSync(targetIndex) && !path.extname(filePath)){
+			// console.log({targetIndex},req)
 			// console.log(filePath.replace(process.cwd(),''))
 			subPath = filePath.replace(process.cwd(),'')
 			console.log(('cwd:'+process.cwd()).magenta)
@@ -79,6 +89,7 @@ module.exports = function (port) {
 				// 304 不执行
 				callback=>{ staticSource.sendStaticSource(filePath,res)}
 			])
+			// staticSource.sendStaticSource(filePath,res)
 		}else{
 			
 			next()
@@ -88,8 +99,25 @@ module.exports = function (port) {
 
 	router.use( (req, res,next) => {
 		// console.log(req.headers.mock,'======')
+
 		console.log('===',req.url,'===')
-		if(req.headers.mock){
+		// console.log('req.headers: ',req.headers)
+		var mockRemote = req.headers['mock-remote']
+		if(mockRemote){
+			console.log('mock-remote: ',mockRemote)
+			// console.log('mockRemote:',url.parse(req.url))
+			var mockParsed = url.parse(mockRemote)
+			// console.log({mockParsed})
+			req.url = mockParsed.pathname
+			req.method = 'GET'
+			
+			delete req.headers.host
+			delete req.headers.domain
+			delete req.headers['mock-remote']
+			callProxy(req, res,{
+				target:`${mockParsed.protocol}//${mockParsed.hostname}`
+			})
+		}else if(req.headers.mock){
 			if(req.headers.mock+'' === 'true'){
 				mockFn(req,res)	
 			}else{
@@ -188,10 +216,14 @@ module.exports = function (port) {
 		
 		
 		req.headers.referer = target
-		proxy.web(req, res, { 
+		callProxy(req, res,{ 
 			target: target,
 			cookieDomainRewrite:cookieDomainRewrite
-		}, function(err) { 
+		})
+	}
+
+	function callProxy(req, res, options){
+		proxy.web(req, res, options , function(err) { 
 				console.log(String(err).red)
 				var data = {
 					'message':'后台接口错误'+String(err),
