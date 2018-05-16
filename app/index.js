@@ -103,7 +103,10 @@ module.exports = function (port) {
 		console.log('===',req.url,'===')
 		// console.log('req.headers: ',req.headers)
 		var mockRemote = req.headers['mock-remote']
-		if(mockRemote){
+		if('false' == mockRemote){ 
+			delete req.headers['mock-remote']
+			delete req.headers['MOCK']
+		}else if(mockRemote){
 			console.log('mock-remote: ',mockRemote)
 			// console.log('mockRemote:',url.parse(req.url))
 			var mockParsed = url.parse(mockRemote)
@@ -117,17 +120,16 @@ module.exports = function (port) {
 			callProxy(req, res,{
 				target:`${mockParsed.protocol}//${mockParsed.hostname}`
 			})
+			return
 		}else if(req.headers.mock){
 			if(req.headers.mock+'' === 'true'){
 				mockFn(req,res)	
 			}else{
 				mockStaticFn(req, res, req.headers.mock)
 			}
-			
-		}else{
-			requestMethod(req,res)
+			return	
 		}
-		
+		requestMethod(req,res)
 	})
 
 	/**
