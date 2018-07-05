@@ -1,22 +1,39 @@
 #!/usr/bin/env node
-
+	
 	var colors = require('colors'),
 		argv = require('yargs')
-				  .option('p', {
-				    alias : 'port',
-				    demand: false,
-				    default: 8080,
-				    describe: '端口',
-				    type: 'number'
-				  })
-				  .argv
+				  	.option('p', {
+				    	alias : 'port',
+					    demand: false,
+					    default: 8080,
+					    describe: '端口',
+					    type: 'number'
+					})
+				  	.option('d', {
+					    alias : 'proxy-domain',
+					    demand: false,
+					    default: {},
+					    describe: '要代理的请求映射',
+					    type: 'string'
+				  	})
+				  	.option('c', {
+					    alias : 'proxy-recookie',
+					    demand: false,
+					    default: {},
+					    describe: '要代重新cookie',
+					    type: 'string'
+				  	})
+				  	.help()
+				  	.argv
 
 	var httpServer = require('./../app/index.js')
 	// var httpServer = require('./../app/app.js')
-	httpServer(argv.p)
+	// console.log(argv)
+	httpServer(argv.p, argv.proxyDomain, argv.proxyRecookie)
 	console.log(('proxy-mock start ......').green)
 	console.log(('proxy-mock start ....').green)
 	console.log(('proxy-mock start .').green)
 	console.log(('proxy-mock start').green)
 
+	
 

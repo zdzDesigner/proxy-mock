@@ -20,7 +20,7 @@ function fineFile(req, root){
 
     var onePath = validPath(rootPath, pathname, method, query)
 
-    // console.log({onePath})
+    console.log({onePath})
     if(!onePath){
         // console.log({rootPath, pathname})
         var matchPath = getMatchPath(rootPath, pathname, method)
@@ -33,7 +33,7 @@ function fineFile(req, root){
         onePath = ''
     }
     console.log({onePath}) 
-    console.log('')
+    
     return {
         query:query,
         onePath:onePath
@@ -109,9 +109,10 @@ function serialize(obj) {
 function getMatchPath (mockRoot, pathname, method){
     var params = {}
     var reg = dirs(mockRoot).filter(function(item){
-
-        var regStr = item.replace(/\{(.+)\}/,'(.+)').replace('[','\\[').replace(']','\\]'),
-            regexp = new RegExp(regStr),
+        console.log({item})
+        var regStr = item.replace(/\{(.+)\}/,'(.+)').replace('[','\\[').replace(']','\\]');
+        console.log({regStr})
+        var regexp = new RegExp(regStr),
             reqMatch = pathname.match(regexp) || (pathname+method).match(regexp),
             key
 
