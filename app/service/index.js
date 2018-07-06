@@ -1,9 +1,9 @@
 var proxy = require('./proxy')
 var mock = require('./mock')
-var findFile = require('./find-file.js')
+var validPath = require('./valid-path.js')
 
 module.exports = {
     mock:mock,
-    findFile:findFile,
+    validPath:validPath,
     proxy:proxy
 }

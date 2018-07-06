@@ -1,17 +1,48 @@
 #proxy-mock
-1. proxy 接口代理到线上地址防止开发中的跨域问题
-2. mock  开发中提供数据模拟
+> proxy 接口代理到线上地址防止开发中的跨域问题
+> mock  开发中提供数据模拟
+
+## proxy 多域代理
+> 根据接口路由配置代理域
+> -d (proxy-domain)
+
+```js
+{
+    '/api/v1/*':'http://www.aaa.com',
+    '/api/v2/*':'http://www.bbb.com'
+}
+```
+
+proxy-mock -d /api/v1/@=http://www.aaa.com&/api/v2/*=http://www.bbb.com
 
 
-
-## 开启proxy ，配置
+## proxy 单域代理 && 兼容老版本
+### 开启proxy ，配置
     请求投中加入"DOMAIN"字段名，值为你的目标地址
     setRequestHeader('DOMAIN','your target address')
 
 ### 新增重写cookie中的domain功能
     setRequestHeader('RECOOKIE-DOMAIN','kashuo.net|localhost')
 
-## 开启mock ，配置
+
+## mock 配置
+> 1. 远程mock
+> 2. 本地mock(根据url匹配)
+> 3. 本地mock(根据配置指定)
+
+### 远程mock
+> 每个接口均可配置
+
+setRequestHeader('mock-remote','http://www.mockxxx.com')
+
+### 本地mock(根据url匹配)
+> 每个接口均可配置
+
+setRequestHeader('mock-remote','@mock/xx/mockxx.json')
+
+### 本地api(根据url匹配)
+> 针对全局
+
     请求投中加入"MOCK"字段名，值为你当前项目下mock数据存放地址
     setRequestHeader('MOCK','/dev/mock')
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-	
 	var colors = require('colors'),
 		argv = require('yargs')
 				  	.option('p', {
@@ -34,6 +33,6 @@
 	console.log(('proxy-mock start ....').green)
 	console.log(('proxy-mock start .').green)
 	console.log(('proxy-mock start').green)
-
+	
 	
 

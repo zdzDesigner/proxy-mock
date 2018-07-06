@@ -58,7 +58,7 @@
                         res.end(data)
                     },20000)
                 }else{
-                    console.log(path.extname(filepath))
+                    // console.log(path.extname(filepath))
                     if('.html' == path.extname(filepath)){
                         res.writeHead(200,{
                             'cache-control':'no-catch',

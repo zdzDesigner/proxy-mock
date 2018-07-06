@@ -134,4 +134,7 @@ function getMatchPath (mockRoot, pathname, method){
     }
 }
 
-module.exports = fineFile
+module.exports = {
+    fineFile:fineFile,
+    relativePath:relativePath
+}

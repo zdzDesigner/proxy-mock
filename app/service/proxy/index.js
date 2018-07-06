@@ -1,5 +1,4 @@
 var domain = require('./domain.js')
-var cookie = require('./cookie.js')
 
 // console.log(domain)
 

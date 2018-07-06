@@ -22,9 +22,9 @@ function matchProxyDomain(domainConfig, url){
     try{
         curDomain = domainConfig[Object.keys(domainConfig)[resExecs[0].index]]    
     }catch(err){
-        console.log(url)
+        // console.log(url)
         curDomain = ''
-        throw new Error('未配代理路径')
+        console.log('未配代理路径')
     }
     
 
