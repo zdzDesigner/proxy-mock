@@ -48,6 +48,10 @@ module.exports = function (port, proxyDomain, proxyRecookie) {
 	router.use(routers.proxy.api(domains, recookies))
 	// 指定domain代理
 	router.use(routers.proxy.domain)
+	router.use(function(req, res){
+		res.statusCode = 404
+		res.end('No content')
+	})
 	
 	
 	process.on( 'SIGINT', function() {

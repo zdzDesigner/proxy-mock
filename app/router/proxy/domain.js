@@ -1,7 +1,6 @@
-var httpProxy = require('http-proxy')
-var proxyServer = httpProxy.createProxyServer({})
+var proxyServer = require('../../service').proxyServer
 
-module.exports = function(req, res){
+module.exports = function(req, res, next){
     var domain = req.headers['domain']
     var recookieStr = req.headers['recookie-domain'] || ''
     
@@ -16,6 +15,8 @@ module.exports = function(req, res){
             target: domain,
             cookieDomainRewrite:getRecookies(recookieStr)
         })
+    }else{
+        next()
     }
 
 }

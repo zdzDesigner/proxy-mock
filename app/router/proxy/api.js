@@ -1,5 +1,4 @@
-var httpProxy = require('http-proxy')
-var proxyServer = httpProxy.createProxyServer({})
+var proxyServer = require('../../service').proxyServer
 var matchProxyDomain = require('../../service').proxy.matchProxyDomain
 
 module.exports = function(domains, recookies){
@@ -10,7 +9,7 @@ module.exports = function(domains, recookies){
         if(curDomain){
             delete req.headers.host
             req.headers.referer = curDomain
-
+            // console.log({proxyServer})
             proxyServer.web(req, res, { 
                 target: curDomain,
                 cookieDomainRewrite:recookies

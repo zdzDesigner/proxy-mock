@@ -3,10 +3,8 @@
  * @param  {[type]} callProxy [proxy]
  * @return {[type]}           [routeFunction]
  */
-
 var url = require('url')
-var httpProxy = require('http-proxy')
-var proxyServer = httpProxy.createProxyServer({})
+var proxyServer = require('../../service').proxyServer
 
 module.exports = function remoteMock(req, res, next){
     // return function(req, res, next){
@@ -16,11 +14,12 @@ module.exports = function remoteMock(req, res, next){
             return
         }
         
-        console.log('mock-remote: ',mockRemote)
+        
         var mockParsed = url.parse(mockRemote)
            
         // console.log('mockParsed.protocol: ', mockParsed.protocol)
         if(~['http:','https:'].indexOf(mockParsed.protocol)){
+            console.log('mock-remote: ',mockRemote)
             req.url = mockParsed.pathname
             req.method = 'GET'
             
@@ -28,7 +27,8 @@ module.exports = function remoteMock(req, res, next){
             delete req.headers.domain
             delete req.headers['mock-remote'] 
             
-            proxyServer(req, res,{
+            // console.log({proxyServer})
+            proxyServer.web(req, res,{
                 target:`${mockParsed.protocol}//${mockParsed.hostname}`
             })  
             // callProxy(req, res,{

@@ -4,18 +4,19 @@ var staticSource = require('../../util/static-source.js')
 var warn = require('../../util/warn.js')
 var mock = require('../../service').mock
 var relativePath = require('../../service').validPath.relativePath
-
+var rootPath = path.resolve(process.cwd(), relativePath('../src/mock'))
+// console.log({rootPath})
 module.exports = function localMock(req, res, next){
     var mockRemote = req.headers['mock-remote']
-    var rootPath = ''
+    // var rootPath = ''
     var filePath = ''
     if(mockRemote){
 
-        var rootPath = path.resolve(process.cwd(), relativePath('../src/mock'))
+        // var rootPath = path.resolve(process.cwd(), relativePath('../src/mock'))
         mockRemote = mockRemote.replace('/@mock','').replace('@mock','')
         filePath = rootPath + mockRemote
-        console.log('mock-local: ',mockRemote)
-        console.log(rootPath+mockRemote)
+        console.log('mock-local: ', filePath)
+        
         if(fs.existsSync(filePath)){
             var data = fs.readFileSync(filePath)    
             data = JSON.parse(data.toString())
