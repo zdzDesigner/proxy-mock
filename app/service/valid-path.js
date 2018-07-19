@@ -4,12 +4,12 @@ var dirs = require('./../util/dirs.js')
 var getParse = require('./../util/get-parse.js')
 var staticSource = require('./../util/static-source.js')
 /**
- * [fineFile 查找文件]
+ * [findFile 查找文件]
  * @return {[type]} [description]
  * 
  */
 
-function fineFile(req, root){
+function findFile(req, root){
     var url = req.url
     var method = '['+req.method.toLowerCase()+']'
     var urlParsed = getParse(url)
@@ -135,6 +135,6 @@ function getMatchPath (mockRoot, pathname, method){
 }
 
 module.exports = {
-    fineFile:fineFile,
+    findFile:findFile,
     relativePath:relativePath
 }

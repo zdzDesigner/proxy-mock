@@ -6,8 +6,9 @@
 
 var staticSource = require('../../util/static-source.js')
 var warn = require('../../util/warn.js')
-var mock = require('../../service').mock
-var findFile = require('../../service').validPath.findFile
+var service = require('../../service')
+var mock = service.mock
+var findFile = service.validPath.findFile
 
 module.exports = function rootMock(req, res, next){
     var mockRoot = req.headers.mock
