@@ -27,7 +27,7 @@
 
 	var httpServer = require('./../app/index.js')
 	// var httpServer = require('./../app/app.js')
-	// console.log(argv)
+	// console.log(argv.proxyDomain)
 	httpServer(argv.p, argv.proxyDomain, argv.proxyRecookie)
 	console.log(('proxy-mock start ......').green)
 	console.log(('proxy-mock start ....').green)

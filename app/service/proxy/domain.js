@@ -38,7 +38,7 @@ function convertArgDomain(proxyDomain){
     
     if(proxyDomain){
         proxyDomain = (proxyDomain 
-                        && decodeURIComponent(proxyDomain).replace(/@/g,'*'))
+                        && decodeURIComponent(proxyDomain).replace(/@@/g,'&').replace(/@/g,'*'))
                         || ''
         domains = querystring.parse(proxyDomain)
     }

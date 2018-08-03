@@ -13,6 +13,7 @@ module.exports = function (port, proxyDomain, proxyRecookie) {
 	
 	var domains = convertArgDomain(proxyDomain)
 	var recookies = convertArgRecookies(proxyRecookie)
+	
 	debug({domains, recookies})
 
 	var server = http.createServer().listen(port)
