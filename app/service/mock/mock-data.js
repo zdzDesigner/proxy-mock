@@ -308,19 +308,20 @@ var keys = ['no-mock','mock-length','mock-delay']
 
 
 // 输出
-module.exports = function(value,mockPath,query) {
+module.exports = function(value, mockPath, query, options) {
 
     var arrRange = [30, 30],
         delay = 0,
         clearAttr = cclearAttr(value),
         data, mockLength, mockDelay, noMock
 
+    options = options || {}
 
     if(util.isObject(value)){
         
-        mockLength = value['mock-length']
-        mockDelay = value['mock-delay'] || 0
-        noMock = value['no-mock'] || false
+        mockLength = value['mock-length'] || options['mock-length']
+        mockDelay = value['mock-delay'] || options['mock-delay'] || 0
+        noMock = value['no-mock'] || options['no-mock'] || false
         clearAttr('no-mock')
         clearAttr('mock-length')
         clearAttr('mock-delay')
