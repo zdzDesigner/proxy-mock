@@ -12,4 +12,3 @@ const res = {
 
 
 module.exports = res
-exports = res

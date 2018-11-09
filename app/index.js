@@ -5,8 +5,8 @@ var finalhandler = require('finalhandler')
 var router = require('router')()
 var debug = require('debug')('proxy-mock')
 var routers = require('./router')
-var convertArgDomain = require('./service').proxy.convertArgDomain
-var convertArgRecookies = require('./service').proxy.convertArgRecookies
+var {proxy, samePort} = require('./service')
+var {convertArgDomain, convertArgRecookies} = proxy
 
 
 module.exports = function (port, proxyDomain, proxyRecookie) {
@@ -16,7 +16,12 @@ module.exports = function (port, proxyDomain, proxyRecookie) {
 	
 	debug({domains, recookies})
 
-	var server = http.createServer().listen(port)
+	var server = http.createServer()
+	server.on('error',function(err){
+		samePort(port)
+		server.close()
+	})
+	server.listen(port)
 
 	server.on('request',(req,res)=>{
 		if( ~req.url.indexOf('favicon.ico') ) {
@@ -63,4 +68,3 @@ module.exports = function (port, proxyDomain, proxyRecookie) {
 	
 
 }
-

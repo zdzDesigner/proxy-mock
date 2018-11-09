@@ -1,6 +1,11 @@
 var httpProxy = require('http-proxy')
 var proxyServer = httpProxy.createProxyServer({})
-
+proxyServer.on('open', function (proxySocket) {
+    console.log(proxySocket)
+})
+proxyServer.on('close', function (res, socket, head) {
+    console.log(proxySocket)
+})
 proxyServer.on('error', function (err, req, res) {
   res.writeHead(500, {
     'Content-Type': 'text/plain'

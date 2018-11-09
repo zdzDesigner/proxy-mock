@@ -3,7 +3,6 @@ var proxyServer = require('../../service').proxyServer
 module.exports = function(req, res, next){
     var domain = req.headers['domain']
     var recookieStr = req.headers['recookie-domain'] || ''
-    
     if(domain){
         delete req.headers['domain']
         delete req.headers['recookie-domain']
